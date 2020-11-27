@@ -3,7 +3,7 @@ const app = express();
 const { loadNuxt, build } = require('nuxt');
 const consola = require('consola')
 import {authInit} from './auth'
-
+import {tasksInit} from './tasks'
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 import Log from './logger';
@@ -39,8 +39,9 @@ app.use(express.urlencoded({
 
 // custom routes
 const authRoutes = authInit(app);
+const taskRoutes = tasksInit(app);
 app.use('/user', authRoutes)
-
+app.use('/task', taskRoutes)
 // Init Nuxt.js
 const isDev = process.env.NODE_ENV !== 'production';
 console.log("is dev?", isDev);

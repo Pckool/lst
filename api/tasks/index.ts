@@ -13,7 +13,6 @@ var bodyParser = require('body-parser');
 
 import Log from '../logger';
 import TDB from './../clients/tasks';
-import {User} from './../interfaces';
 
 
 // let RedisStore = require('connect-redis')(session)
@@ -23,9 +22,9 @@ const nonce = Nonce(34);
 
 
 
-function authInit(app: Express){
+function tasksInit(app: Express){
 	
-	router.post('/create', async (req: any, res: any) => {
+	router.post('/add', async (req: any, res: any) => {
 		let task;
 		try{
 			Log.info('checking if the user exists...');
@@ -92,6 +91,6 @@ function authInit(app: Express){
 
 export default router;
 export {
-	authInit
+	tasksInit
 }
 

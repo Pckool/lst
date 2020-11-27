@@ -25,12 +25,12 @@
     </div>
 </template>
 <script lang="ts">
-import {defineComponent, reactive, ref} from '@vue/composition-api'
+import {defineComponent, getCurrentInstance, reactive, ref} from '@vue/composition-api'
 import { PendingTask, Task, tasks, user } from '~/core'
 import DynamicInput from '~/components/general/dynamicInput.vue'
 export default defineComponent({
     components: {DynamicInput},
-    setup(){
+    setup(props, ctx){
         const task = reactive<PendingTask>(tasks.state.pending.value)
         const text = ref<string>('Pick up dog food')
         const ts = new Date(task.ts)
@@ -46,7 +46,9 @@ export default defineComponent({
             task.ts = newTs.getTime()
             task.text = text.value
             task.owner = user.state.id.value
-            tasks.add(task);
+            tasks.add(task).then(() => {
+                ctx.emit('close')
+            });
         }
         return {
             task,
