@@ -123,7 +123,8 @@ function authInit(app: Express){
 							name: user.name,
 							email: user.email,
 							id: user.id,
-							sig_url: user.sig_url,
+							verified: user.verified,
+							// pf_picture: user.img_url
 						},
 						namespaces: user.namespaces,
 					});
@@ -148,6 +149,31 @@ function authInit(app: Express){
 			Log.info('User '+req.body.username+" doesn't exist.")
 		}
 	});
+
+	router.post('/verify', async (req, res, next) => {
+		try{
+			let user = await UDB.findUser(req.body.username.toLowerCase());
+			const veriStat = await UDB.verify(req.body.username.toLowerCase(), req.body.code);
+
+			if(veriStat) {
+				user.verified = true;
+				UDB.update(user._id, {verified: user.verified})
+			}
+
+			res.status(veriStat ? 200 : 400).json({
+				name: user.name,
+				email: user.email,
+				id: user.id,
+				verified: user.verified,
+			})
+			
+		}catch(err){
+
+		}
+		finally{
+			next()
+		}
+	})
 
 	router.post('/logout', async (req: any, res: any) => {
 		

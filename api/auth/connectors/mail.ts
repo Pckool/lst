@@ -1,10 +1,11 @@
 const mailer = require('nodemailer');
+const mailUser = 'lst.app.mailer@gmail.com';
 const transporter = mailer.createTransport({
-    host: '198.54.126.144',
+    host: 'smtp.gmail.com',
     port: '465',
     secure: true,
     auth: {
-        user: 'no-reply@badquality.co',
+        user: mailUser,
         pass: process.env.MAILER_PASS
     },
     tls: {
@@ -18,22 +19,21 @@ interface EmailOptions {
 }
 export function sendEmail(recipiant: string, html: string, options: EmailOptions = {}) {
     var mailOptions = {
-    from: '"LST" <no-reply@badquality.co>',
+    from: `"LST" <${mailUser}>`,
     to: recipiant,
     subject: options.subject || 'Message from LST!',
     html: `${html}`
 
     }
     return new Promise((resolve, reject) => {
-    if (html === '') return reject();
-    transporter.sendMail(mailOptions)
+        if (html === '') return reject();
+        transporter.sendMail(mailOptions)
         .then((info:any) => {
-        console.log('Email sent!');
-        return resolve(info);
-        })
-        .catch((err:Error|undefined) => {
-        console.log(err);
-        return reject(err);
+            console.log('Email sent!');
+            return resolve(info);
+        }).catch((err:Error|undefined) => {
+            console.error(err);
+            return reject(err);
         });
     });
 }    

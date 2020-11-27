@@ -1,10 +1,12 @@
 export type namespaceID = string;
 export type moduleID = string;
 export type userID = string;
+export type resID = string;
 export type Scope = Array<string>
 
 
 export interface User {
+    _id?: resID;
     id: userID;
     email: string;
     name: string;
@@ -19,6 +21,12 @@ export interface User {
     namespaces?: Array<UserNamespace>;
 }
 
+export interface PendingUser {
+    _id: resID;
+    id: string;
+    email: string;
+    ver_key: string|number;
+}
 export interface UserNamespace {
     id: namespaceID;
     name: string;

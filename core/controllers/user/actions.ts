@@ -15,6 +15,23 @@ export const actions = {
         try{
             let res = await userApi.login({username, password})
             console.log(res);
+            let keys = Object.keys(res.data.user);
+            // console.log(core.user);
+            keys.forEach(key => {
+                this.setProp(key, res.data.user[key]);
+                // console.log(user);
+            })
+            return res.data;
+        } catch (err: any){
+            console.error(err);
+            return err;
+        }
+    },
+    
+    async verify(username:string, code: number): Promise<any> {
+        try{
+            let res = await userApi.verify({username, code})
+            console.log(res);
             return res.data;
         } catch (err: any){
             console.error(err);

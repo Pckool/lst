@@ -16,9 +16,14 @@ interface PulseResponse<DataType = any> {
     raw?: Response;
     type?: string;
 }
+interface UserVerification {
+    username: string;
+    code: number;
+}
 export const fetchers = {
     login: async (data): Promise<PulseResponse> => (await api.post('user/login', data)),
     register: async (data: User): Promise<PulseResponse> => (await api.post('user/create', data)),
+    verify: async (data: UserVerification): Promise<PulseResponse> => (await api.post('user/verify', data)),
     logout: async (): Promise<PulseResponse> => (await api.post('user/logout')),
     auth: async (): Promise<PulseResponse> => (await api.post('user/auth')),
     getAll: async (): Promise<PulseResponse> => (await api.get('user/get')),

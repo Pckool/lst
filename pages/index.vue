@@ -95,12 +95,7 @@ export default Vue.extend({
 				user.login(this.username, this.pass)
 				.then((res) => {
 					// console.log(res);
-					let keys = Object.keys(res.user);
-					// console.log(core.user);
-					keys.forEach(key => {
-						core.user.setProp(key, res.user[key]);
-						// console.log(user);
-					})
+					
 					
 					this.loading = false;
 					document.getElementById('submit')?(<HTMLFormElement>document.getElementById('submit')).disabled = false:undefined;

@@ -20,6 +20,30 @@ class Fauna {
         }
         
     }
+    
+    async delete(collectionName:string, id: any) {
+        try{
+            let res = await this.client.query(
+                this.q.Delete(this.q.Ref(this.q.Collection(collectionName), id))
+            )
+            
+        } catch(err){
+            throw err;
+        }
+        
+    }
+
+    async update(collectionName:string, _id: string, data: any) {
+        try{
+            let res = await this.client.query(
+                this.q.Update(this.q.Ref(this.q.Collection(collectionName), _id), {data})
+            )
+            
+        } catch(err){
+            throw err;
+        }
+        
+    }
     async getAll (collectionName: string): Promise<any[]> {
         try{
             let page = (await this.client.query(
@@ -30,7 +54,7 @@ class Fauna {
                 page.map((document) => this.q.Get(document)) // this wraps all of the document refs in a get function
             ))
 
-            return <any[]>ret.map((dataObj) => dataObj.data) // flattens the array to only have the data
+            return <any[]>ret.map((dataObj) => ({...dataObj.data, _id: dataObj.ref.id})) // flattens the array to only have the data
         } catch(err){
             throw err;
         }

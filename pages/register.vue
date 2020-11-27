@@ -89,7 +89,6 @@ export default Vue.extend({
 					'loop': true,
 					'easing': 'easeInOutQuad'
 				});
-				console.log(root);
 				user.register({
 					username: this.username,
 					pass: this.pass,
@@ -105,7 +104,9 @@ export default Vue.extend({
 						easing: 'easeInOutQuad',
 						duration: 1000,
 						complete: () => {
-							this.$router.push('/pendingUser')
+							user.login(this.username, this.password).then((res) => {
+								this.$router.push('/app')
+							})
 						}
 					}).add({
 						targets: '.right .dyn-input, .right button',
@@ -149,7 +150,6 @@ export default Vue.extend({
 	},
 	created(){
 		if(core.user.state.email.value) this.username = core.user.state.email.value;
-		console.log(this)
 	},
 	mounted(){
 		anime.timeline({
@@ -185,11 +185,11 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 .error{
-	color: var(--loxRed);
+	color: var(--red);
 }
 .main-cont{
 	.background{
-		background: var(--loxBeige);
+		background: var(--black);
 		z-index: 1;
 	}
 	display: flex;
@@ -247,7 +247,7 @@ export default Vue.extend({
 					}
 				}
 				h6{
-					color: var(--loxGrey);
+					color: var(--grey);
 					display: inline-block;
 					overflow: hidden;
 					margin: 0;
