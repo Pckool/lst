@@ -3,8 +3,8 @@
 		<div class="top_cont">
 			
 			<div class="toggle">
-				<nuxt-link :to="{name: 'index'}">login</nuxt-link>
-				<nuxt-link :to="{name: 'register'}">signup</nuxt-link>
+				<nice-link to="/" text="login"/>
+				<nice-link to="/register" text="signup"/>
 
 				<!-- <div class="bar"></div> -->
 			</div>
@@ -20,9 +20,10 @@
 
 <script lang="ts">
 import Alert from '~/components/general/Alert.vue'
+import NiceLink from '~/components/general/niceLink.vue'
 import {defineComponent} from '@vue/composition-api'
 export default defineComponent({
-	components: {Alert},
+	components: {Alert, NiceLink},
 })
 </script>
 <style lang="scss">
@@ -52,38 +53,14 @@ export default defineComponent({
 			pointer-events: all;
 		}
 		.nuxt-link-exact-active{
-					color: var(--loxOrange) !important;
+			color: var(--red) !important;
 		}
 		.toggle{
 			margin: 3em;
 			position: relative;
 			pointer-events: all;
-			a{
-				margin-left: 1em;
-				position: relative;
-				// &::after{
-				// 	content: "";
-				// 	position: absolute;
-				// 	top: 50%;
-				// 	left: 50%;
-				// 	transform: translate(-50%, -50%);
-				// 	transition: all 0.1s ease-out;
-				// 	width: 0%;
-				// 	height: 0px;
-				// 	// border-radius: 10em;
-				// 	background: rgba(0,0,0,0);
-				// 	mix-blend-mode: difference;
-				// }
-				&:hover {
-					color: var(--loxOrange);
-					// &::after{
-					// 	width: 100%;
-					// 	height: 21px;
-					// 	padding: 1em;
-					// 	background: var(--loxBlack);
-					// }
-				}
-			}
+			display: flex;
+			
 			.bar{
 				height: 1px;
 				width: 0%;

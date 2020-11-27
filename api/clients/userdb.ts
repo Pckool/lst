@@ -1,5 +1,4 @@
 
-import { updateBinary } from 'typescript';
 import DB from '../connectors/fauna'
 import {sendEmail} from '../connectors/mail'
 import {User, PendingUser} from '../interfaces'

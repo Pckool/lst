@@ -14,6 +14,7 @@ export default {
         }
         
     },
+
     async getAll(): Promise<Task[]> {
         try{
             return await DB.getAll('tasks');
@@ -22,6 +23,25 @@ export default {
         }
         
     },
+
+    async remove(username: string) {
+        try{
+            const res = await DB.delete('tasks', username);
+        } catch(err){
+            throw err;
+        }
+        
+    },
+
+    async update(_id: string, data: any) {
+        try{
+            const res = await DB.update('tasks', _id, data);
+        } catch(err){
+            throw err;
+        }
+        
+    },
+
     async findTask(un: string, callback?: Function): Promise<Task|undefined>{
         try{
             un = un.toLowerCase();

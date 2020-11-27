@@ -8,7 +8,7 @@ const Nonce = require('nonce-fast');
 
 
 import {passport, hashPass} from './helpers/authentication';
-import {sendEmail} from './connectors/mail';
+import {sendEmail} from '../connectors/mail';
 
 const randomString = require('crypto-random-string');
 
@@ -16,8 +16,8 @@ var bodyParser = require('body-parser');
 
 
 import Log from '../logger';
-import UDB from './clients/userdb';
-import {User} from './interfaces';
+import UDB from '../clients/userdb';
+import {User} from '../interfaces';
 
 var session = require('express-session');
 const redis = require('redis')
@@ -150,7 +150,7 @@ function authInit(app: Express){
 		}
 	});
 
-	router.post('/verify', async (req, res, next) => {
+	router.post('/verify', async (req, res) => {
 		try{
 			let user = await UDB.findUser(req.body.username.toLowerCase());
 			const veriStat = await UDB.verify(req.body.username.toLowerCase(), req.body.code);
@@ -169,9 +169,6 @@ function authInit(app: Express){
 			
 		}catch(err){
 
-		}
-		finally{
-			next()
 		}
 	})
 
@@ -225,7 +222,7 @@ function authInit(app: Express){
 			
 
 			
-			let message = `<div><h2>Your Requested Password Change</h2><p>If you did not request for your password to be changed, change your password <u>immediately</u>!</p>< a href = "https://loxly.co/reset/pass/${reset_key}">Click here</a><p>Enjoy your day!</p></div>`;
+			let message = `<div><h2>Your Requested Password Change</h2><p>If you did not request for your password to be changed, change your password <u>immediately</u>!</p><a href="https://loxly.co/reset/pass/${reset_key}">Click here</a><p>Enjoy your day!</p></div>`;
 			sendEmail(req.body.email, message, {
 				subject: 'Loxly: Password Reset'
 			}).then(() => {

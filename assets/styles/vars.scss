@@ -14,9 +14,44 @@ $xxlSpace: 2em;
     --grey: #acacac;
     --lightGrey: #ced4da;
     --orange: #FF9B71;
-    --rted: #FF3562;
+    --red: #FF7E7E;
+    --yellow: #FFCB7E;
+    --blue: #7EB2FF;
+    --purple: #A47EFF;
+    --pink: #FF7EE1;
+    --green: #7EFFA9;
     --beige: #eae8e5;
     --superLightGrey: rgb(234, 233, 233);
     --white: #f3f3f3;
     --dark: #212529;
+    --blueGrey: #383B40;
+    --darkBlueGrey: #2c2d2f;
+    --ease: cubic-bezier(0.25, 0.1, 0.01, 1);
+}
+.red {
+  background: var(--red) !important;
+}
+
+.orange {
+  background: var(--orange) !important;
+}
+
+.yellow {
+  background: var(--yellow) !important;
+}
+
+.green {
+  background: var(--green) !important;
+}
+
+.pink {
+  background: var(--pink) !important;
+}
+
+.purple {
+  background: var(--purple) !important;
+}
+
+.blue {
+  background: var(--blue) !important;
 }

@@ -1,7 +1,9 @@
 <template>
     <span class="dyn-input">
         <small class="dyn-input_placeholder">{{placeholder}}</small>
-        <input :type="type" v-model="val" @focus="focus" @blur="blur" :max="max" :min="min"/>
+        <input v-if="type === 'number'" ref="input" :type="type" :value="value" @input="updateInput" @focus="focus" @blur="blur" :max="max" :min="min"/>
+
+        <input v-else ref="input" :type="type" :value="value" @input="updateInput" @focus="focus" @blur="blur"/>
         <div class="dyn-input_extra">
             <slot></slot>
         </div>
@@ -15,7 +17,8 @@ import anime from 'animejs'
 export default Vue.extend({
     data(){
         return {
-            val: ''
+            val: this.value,
+            input: null
         }
     },
     props: {
@@ -36,13 +39,11 @@ export default Vue.extend({
             }
         },
         max: {
-            default: '',
             type: String,
             validator: (val) => !isNaN(Number(val)),
             
         },
         min: {
-            default: '',
             type: String,
             validator: (val) => !isNaN(Number(val)),
             
@@ -54,20 +55,53 @@ export default Vue.extend({
             this.$emit('focus', event)
         },
         blur(event) {
-            if (this.val === '' || this.val === null) (<HTMLElement>this.$el.querySelector('.dyn-input_placeholder')).classList.remove('focused');
+            if (this.value === '' || this.value === null) (<HTMLElement>this.$el.querySelector('.dyn-input_placeholder')).classList.remove('focused');
             this.$emit('blur', event)
+        },
+        updateInput(event: Event){
+            const target = <HTMLInputElement>event.target;
+            
+            if(this.type === 'number'){
+                // remove all alphabetic characters
+                target.value = target.value.replace(/([A-z])+/g, '')
+                
+            }
+            else{
+                // use max as string length limiters
+                if(this.max && !isNaN(Number(this.max)) && target.value.length > Number(this.max)){
+                    
+                    target.value = target.value.substring(0, Number(this.max))
+                }
+            }
+            
+            // this.val = target.value
+
+            this.$emit('input', target.value)
+            // This is circular logic, yes. But for some reason unless I do this, if the value prop is changed outside of this component it does not update the input value. I tried various ways and for some reason it just can't do it properly
+            
+            // this.checkIfEmpty()
+            // this.val = this.value;
+            target.value = this.value;
+            
+        },
+        checkIfEmpty(){
+            console.log(this.input)
+            if(this.value === '' || this.value === null) {
+                (<HTMLElement>this.$el.querySelector('.dyn-input_placeholder')).classList.remove('focused');
+            }
+            else {
+                (<HTMLElement>this.$el.querySelector('.dyn-input_placeholder')).classList.add('focused');
+            }
         }
     },
     watch:{
-        val(){
-            this.$emit('input', this.val)
-            if(this.val === '' || this.val === null) (<HTMLElement>this.$el.querySelector('.dyn-input_placeholder')).classList.remove('focused');
-            else (<HTMLElement>this.$el.querySelector('.dyn-input_placeholder')).classList.add('focused');
-        }
     },
     created(){
         this.val = this.value;
-
+        
+    },
+    mounted(){
+        this.checkIfEmpty()
     }
 })
 </script>

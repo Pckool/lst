@@ -33,6 +33,7 @@
     "nodemailer": "^6.4.16",
     "nonce-fast": "^1.0.2",
     "nuxt": "^2.13.0",
+    "object-hash": "^2.0.3",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "randomstring": "^1.1.5",

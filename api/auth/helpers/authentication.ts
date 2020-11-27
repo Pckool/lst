@@ -1,7 +1,7 @@
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
-import UDB from '../clients/userdb';
-import {User} from '../interfaces';
+import UDB from '../../clients/userdb';
+import {User} from '../../interfaces';
 const bcrypt = require('bcrypt');
 passport.use(
 	new LocalStrategy({

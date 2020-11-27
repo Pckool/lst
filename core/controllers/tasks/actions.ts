@@ -1,10 +1,10 @@
 import {collection, state} from './state';
 import routes from '../../api/api.tasks';
-import {Task} from '../../interfaces';
+import {PendingTask, Task} from '../../interfaces';
 import dayjs from 'dayjs'
 dayjs().format()
 export const actions = {
-	add(task) {
+	add(task: PendingTask) {
 		return new Promise((resolve, reject) => {
 			// send the new coupon to the database
 

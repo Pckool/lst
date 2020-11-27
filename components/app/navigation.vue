@@ -1,22 +1,18 @@
 <template>
-    <div id="app-inner">
-        <nuxt-child/>
-    </div>
+    <nav id="navigation">
+        
+    </nav>
 </template>
-
 <script lang="ts">
 import {defineComponent} from '@vue/composition-api'
-
 export default defineComponent({
-    layout: 'secure',
-    
+    setup(props){
+
+    }
 })
 </script>
-
 <style lang="scss">
-#app-inner{
-    display: flex;
-    flex-grow: 1;
-    
-}   
+#navigation{
+    position: relative;
+}
 </style>

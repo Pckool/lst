@@ -172,39 +172,24 @@ button{
 
 	font-size: 16px;
 	font-weight: 500;
-	&:disabled{
-		background: var(--grey);
-		color: var(--lightGrey);
-
-		&:hover{
-			color: var(--lightGrey);
-		}
-	}
 	&:hover{
-		// background: linear-gradient(-45deg, #FF9B71, #FF3562);
-		// background-color: rgb(255, 255, 255);
 		color: #fff;
 		background: var(--black);
 		outline-width: 1px;
-		// -webkit-background-clip: text;
-		// -webkit-text-fill-color: transparent;
-		&::before{
+	}
+	&:disabled{
+		background: var(--grey);
+		color: var(--lightGrey);
+		cursor: default;
 
+		&:hover{
+			background: var(--grey);
+			outline-width: 0px;
+			color: var(--lightGrey);
 		}
 	}
 	
-	&::before{
-		// z-index: -1;
-		// transition: 0.2s ease-in all;
-		// position: absolute;
-		// content: '';
-		// border-radius: 7px;
-		// top: 0;
-		// left: 0;
-		// height: 100%;
-		// width: 100%;
-		// background: linear-gradient(-45deg, #FF9B71, #FF3562);
-	}
+	
 	&:focus{
 		outline: none;
 	}
@@ -268,28 +253,31 @@ select {
 textarea{
 	background: rgba(0, 0, 0, 0);
 	width: 100%;
-	box-shadow: 0 0 0 0px var(--Grey);
+	box-shadow: 0 0 0 0px var(--grey);
 	border: none;
 	transition: all 0.2s ease-out;
 	border-radius: 0px;
 	padding: 0em;
 	max-height: 10rem;
 	min-height: 10rem;
-	color: var(--Grey);
+	color: var(--grey);
+	font-size: 26px;
+	font-weight: 300;
+	font-family: 'Inter';
 
 	&:focus{
-		box-shadow: 0 0 0 1px var(--Grey);
-		border-radius: 20px;
+		box-shadow: 0 0 0 1px var(--grey);
+		border-radius: 1px;
 		outline: none;
 		padding: 1em;
 		color: unset;
 	}
 }
 a{
-	color: var(--JetBlack);
+	color: var(--white);
 	transition: 0.1s all ease-in;
 	&:hover{
-		color: var(--White);
+		color: var(--white);
 		text-decoration: none;
 	}
 }
@@ -347,7 +335,7 @@ a{
 	
 }
 
-label {
+label.custom {
 	background: white;
 	padding: 0.7em 1.2em;
 	border-radius: 10px;
@@ -694,111 +682,6 @@ label {
 
 
 
-
-
-
-
-.event-list{
-	@extend .box-cont;
-	list-style: none;
-	margin-bottom: 1em;
-	// cursor: pointer;
-
-	ul{
-		padding-left: 0;
-	}
-	.title-badge{
-		display: flex;
-		justify-content: space-between;
-		cursor: pointer;
-		align-items: baseline;
-		flex-flow: row wrap;
-	}
-	.list-content{
-
-	}
-
-	
-	li{
-		padding: 1em;
-		display: flex;
-		flex-flow: row nowrap;
-		justify-content: space-evenly;
-		border-color: #ececec;
-		border-style: solid;
-		border-width: 0px;
-		border-bottom-width: 2px;
-		transition: 0.3s all;
-		margin: 1em 0;
-		// outline-color: #ececec;
-		// outline-style: solid;
-		// outline-width: 0px;
-		// border-radius: 7px;
-		cursor: pointer;
-		&:hover {
-			
-			// box-shadow: 0px 0px 5px 0px var(--Black);
-			border-top-width: 2px;
-			border-left-width: 2px;
-			border-right-width: 2px;
-			// outline-width: 2px;
-
-		}
-
-		span {
-			display: inline-block;
-			flex: 1 1 0;
-
-			p {
-				margin: 0;
-				text-align: center;
-				pointer-events: none;
-
-			}
-
-			h6 {
-				text-align: center;
-				color: var(--Orange);
-				pointer-events: none;
-			}
-		}
-	}
-	.guide{
-		padding: 1em;
-		display: flex;
-		flex-flow: row wrap;
-		justify-content: space-evenly;
-		border-color: #ececec;
-		border-style: solid;
-		border-width: 0px;
-		border-bottom-width: 2px;
-		transition: 0.3s all;
-		margin: 1em 0;
-		// border-radius: 7px;
-		span {
-			display: inline-block;
-			flex: 1 1 0;
-
-			p {
-				margin: 0;
-				text-align: center;
-				pointer-events: none;
-
-			}
-
-			h6 {
-				text-align: center;
-				color: var(--Orange);
-				pointer-events: none;
-			}
-		}
-	}
-	
-
-}
-
-
-
 .heading-bar-lite{
 	display: flex;
 	justify-content: space-between;
@@ -871,7 +754,7 @@ label {
 	transition: all 0.1s ease-in-out;
 
 	&:hover {
-		color: var(--Orange);
+		color: var(--red);
 		text-decoration: underline;
 	}
 }
@@ -912,7 +795,7 @@ label {
 		cursor: pointer;
 		border-radius: 20px;
 		background: var(--Red);
-		color: var(--Beige);
+		color: var(--white);
 		display: flex;
 		justify-content: space-between;
 		align-content: center;
@@ -924,7 +807,7 @@ label {
 		}
 		span{
 			text-transform: capitalize;
-			color: var(--Beige);
+			color: var(--white);
 			font-family: 'Roboto';
 			font-weight: 700;
 		}
