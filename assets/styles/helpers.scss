@@ -1,0 +1,298 @@
+@import './vars.scss';
+
+.separator {
+    border-bottom: darkgray 1px solid;
+    padding-bottom: 1em;
+}
+.m-a {
+    margin: auto;
+    text-align: center;
+}
+.r {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+
+    .c {
+        flex: 1 1 0;
+        margin: 1em;
+    }
+}
+.box-cont{
+    background: var(--White);
+    border-radius: 20px;
+    padding: 2.5em;
+    height: auto;
+    
+    box-shadow: 0 0 10px 0 rgba(68, 68, 68, 0.103);
+    max-width: 99%;
+}
+.div-card {
+    width: 30em;
+    border-radius: 20px;
+    background: var(--White);
+    text-align: center;
+    padding: 2em;
+    height: auto;
+}
+
+.div-card-side {
+    width: 30em;
+    border-radius: 20px;
+    background: var(--White);
+    text-align: center;
+    padding: 2em;
+    height: auto;
+
+    .background {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        width: 100%;
+        background: var(--Grad);
+    }
+
+    .left {
+        position: relative;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 40%;
+        z-index: 1000;
+
+    }
+
+    .right {}
+}
+.fill-h{
+    width: 100%;
+}
+.ho-or {
+    transition: all 0.1s;
+
+    &:hover {
+        color: var(--Orange);
+        cursor: pointer;
+    }
+}
+.ho-rd {
+    transition: all 0.1s;
+
+    &:hover {
+        color: rgb(202, 26, 26);
+        cursor: pointer;
+    }
+}
+
+.flex-end{
+    justify-self: end;
+}
+
+.spread-h {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-content: center;
+    align-items: baseline;
+}
+
+.space-h {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-content: center;
+    align-items: baseline;
+}
+
+.g-1 {
+    flex-grow: 1 !important;
+}
+.g-2 {
+    flex-grow: 2 !important;
+}
+.g-3{
+    flex-grow: 3 !important;
+}
+.center-h {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    align-items: baseline;
+}
+.start-h {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-content: center;
+    align-items: baseline;
+}
+.start-v{
+    align-content: flex-start !important;
+
+}
+.flex-v {
+    display: flex;
+    flex-flow: column nowrap;
+    flex: 1 1 0;
+}
+.space-v {
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: space-around;
+    align-content: center;
+    align-items: baseline;
+    flex: 1 1 0;
+    label {
+        width: 100%;
+    }
+}
+.spread-v {
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: space-between;
+    align-content: center;
+    align-items: baseline;
+    flex: 1 1 0;
+    label{
+        width: 100%;
+    }
+}
+.center-v {
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: center;
+    align-content: center;
+    align-items: baseline;
+    flex: 1 1 0;
+}
+
+.no-wrap {
+    flex-wrap: nowrap;
+}
+
+.ai-center {
+    align-items: center;
+
+}
+
+
+
+.hover-enlarge {
+    position: relative;
+    z-index: 100;
+    transition: all 0.1s ease-out;
+    box-shadow: 0px 10px 10px #d0cbc346;
+    &:hover {
+        transform: translateY(-3px) !important;
+        box-shadow: 0px 10px 10px #d0cbc3;
+    }
+
+}
+
+.grid-cont {
+    display: grid;
+    grid-template-rows: repeat(4, 1fr);
+    grid-template-columns: repeat(6, 1fr);
+    height: 98%;
+    padding: 1em 0;
+    grid-column-gap: 1em;
+    grid-row-gap: 2em;
+
+}
+
+.card-wrapper {
+    padding: 0.5em 0;
+}
+
+.card {
+    @extend .div-card;
+    display: flex;
+    flex-flow: column wrap;
+
+    div {
+        padding-top: 1em;
+        padding-bottom: 1em;
+        text-align: left;
+        
+        width: 100%;
+        width: -webkit-fill-available;
+
+    }
+
+}
+
+.card-lg {
+    @extend .card;
+    width: 80em;
+    max-width: 100vw;
+}
+
+.card-md {
+    @extend .card;
+    width: 40em;
+    max-width: 100vw;
+}
+
+.card-sm {
+    @extend .card;
+    width: 20em;
+
+}
+
+.card-m {
+    @extend .card;
+    flex-flow: column wrap;
+    justify-content: space-around;
+    align-self: center;
+
+}
+
+.card-t {
+    @extend .card;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+    align-self: flex-start;
+    overflow: auto;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    max-height: 100vh;
+}
+.card-t-lg {
+    @extend .card-lg;
+    @extend .card-t;
+    
+    max-width: 100vh;
+}
+.card-t-md {
+    @extend .card-md;
+    @extend .card-t;
+    
+    max-width: 100vh;
+}
+
+.card-b {
+    @extend .card;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+    align-self: flex-start;
+    overflow: auto;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    max-height: 100vh;
+    position: absolute;
+    bottom: 0;
+    max-width: 100vw;
+}
+
+.card-b-xl {
+    @extend .card-b;
+    width: 100vw;
+    max-width: 100vw;
+}
+
+.flex-list-v{
+    display: flex;
+    flex-flow: column wrap;
+}
