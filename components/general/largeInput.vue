@@ -1,12 +1,11 @@
 <template>
-    <div>
-        <h1 ref="el" class="text_large" @blur="check" @focus="recordCaret" contenteditable="true">
-            {{value}}
-        </h1>
-    </div>
+    <h1 ref="el" class="text_large" @blur="check" @focus="recordCaret" @input="input" contenteditable="true">
+        {{text}}
+    </h1>
+
 </template>
 <script lang="ts">
-import {defineComponent, ref} from '@vue/composition-api'
+import {computed, defineComponent, getCurrentInstance, onBeforeUnmount, ref, watch, watchEffect} from '@vue/composition-api'
 export default defineComponent({
     props: {
         value: {
@@ -16,8 +15,8 @@ export default defineComponent({
     },
     setup(props, ctx){
         const el = ref<HTMLElement>()
-        const elText = ref<HTMLElement>()
         const range = ref()
+        
         const getCaretPosition = (editableDiv) => {
             let caretPos = 0,
                 sel, range;
@@ -42,12 +41,32 @@ export default defineComponent({
             range.value = document.createRange()
             // console.log(value, el, caretPos.value, getCaretPosition(el))
             ctx.emit('input', value)
+            el.value.innerText = props.value
+            
         }
+        const input = () => {
+            
+        }
+        const text = computed(() => {
+            return props.value
+        })
+        const stop = watchEffect(() => {
+            text
+            props.value
+            if(el.value){
+                el.value.innerText = props.value
+            }
+            // console.log('effect')
+        })
+        onBeforeUnmount( () => {
+            stop()
+        })
         return {
             check,
             el,
-            elText,
             recordCaret,
+            text,
+            input,
         }
     }
 })

@@ -10,7 +10,7 @@
 			
 		</div>
 		<transition name="undo">
-			<small class="undo" v-if="imgData && waiting">undo</small>
+			<small class="undo" v-if="imgData && waiting" @click="undo">undo</small>
 		</transition>
 	</div>
 	
@@ -22,7 +22,7 @@ export default defineComponent({
 	setup(){
 		const input = ref<HTMLInputElement>();
 		const cont = ref<HTMLElement>();
-		const imgData = ref<string>();
+		const imgData = ref<string>(user.state.img_url.value);
 		const waiting = ref<boolean>(false)
 		let timeout = null;
 		
@@ -37,21 +37,33 @@ export default defineComponent({
 		})
 		const imgChange = async (e) => {
 			const file = (<HTMLInputElement>e.target).files[0];
-			// console.log(file);
-			imgData.value = await toBase64(file);
-			console.log(imgData);
-			waiting.value = true;
-			if(timeout !== null) {
-				clearTimeout(timeout);
+			if(file){
+				imgData.value = await toBase64(file);
+				console.log(imgData);
+				waiting.value = true;
+				if(timeout) {
+					clearTimeout(timeout);
+				}
+				timeout = setTimeout(() => {
+					// wait for 5 seconds, then save the image
+					user.state.img_url.set(imgData.value);
+					user.update()
+
+				}, 5000)
 			}
-			timeout = setTimeout(() => {
-				// wait for 5 seconds, then save the image
-				user.state.img_url.set(imgData.value);
-				user.update()
-			}, 5000)
+			
 			
 		}
+		const undo = () => {
+			if(imgData.value && waiting.value){
+				if(timeout){
+					clearTimeout(timeout);
+				}
+				imgData.value = user.state.img_url.value;
+			}
+		}
 		onMounted(() => {
+			imgData.value = user.state.img_url.value;
 			// input.value.onchange = (e) => {
 			// 	imgChange(e)
 			// }
@@ -69,7 +81,8 @@ export default defineComponent({
 			imgChange,
 			imgData,
 			cont,
-			waiting
+			waiting,
+			undo
 		}
 	}
 })

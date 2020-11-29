@@ -19,7 +19,8 @@
 			<div class="in-cont">
 				<label>When is it due?</label>
 				<div class="in-row">
-					<input type="date" v-model="date">
+					<!-- <input type="date" v-model="date"> -->
+					<date-input v-model="date" />
 					<input type="time" v-model="time">
 				</div>
 				
@@ -30,12 +31,14 @@
 </template>
 <script lang="ts">
 import {defineComponent, getCurrentInstance, reactive, ref} from '@vue/composition-api'
-import { PendingTask, Task, tasks, user } from '~/core'
+import core, { PendingTask, Task, tasks, user } from '~/core'
 import DynamicInput from '~/components/general/dynamicInput.vue'
 import SvgIcon from '~/components/general/svgIcon.vue'
 import LargeInput from '~/components/general/largeInput.vue'
+import DateInput from '~/components/general/dateInput.vue'
+
 export default defineComponent({
-	components: {DynamicInput, SvgIcon, LargeInput},
+	components: {DynamicInput, SvgIcon, LargeInput, DateInput},
 	setup(props, ctx){
 		const task = reactive<PendingTask>(tasks.state.pending.value)
 		const text = ref<string>('Pick up dog food')
@@ -52,8 +55,10 @@ export default defineComponent({
 			task.ts = newTs.getTime()
 			task.text = text.value
 			task.owner = user.state.id.value
-			tasks.add(task).then(() => {
+			tasks.add(task).then((genTask: Task) => {
+				core.emitters.tasks.CREATED.emit(genTask);
 				ctx.emit('close')
+				
 			});
 		}
 		return {
@@ -61,7 +66,7 @@ export default defineComponent({
 			text,
 			time,
 			date,
-			submit
+			submit,
 		}
 	}
 })

@@ -49,24 +49,7 @@ function tasksInit(app: Express){
 			Log.info(`Task successfully generated!`);
 			
 		} catch(err){
-			Log.error("Error when trying to create user "+JSON.stringify(task, null, 2))
-			res.status(500).json(err);
-		}
-
-		try{
-			let recipients = '';
-			// (await UDB.getAll()).forEach((el:any) => {
-			// 	if (el.level > 2) recipients = `${recipients}${el.email};`
-			// })
-			// if(!recipients || recipients === '') return;
-			// sendEmail(recipients, `<p>A new person has signed up for your Loxly instance!</p> 
-			// 	<p>Name: <b>${user.name}</b></p>
-			// 	<p>Email: <b>${user.email}</b></p>
-			// 	<p>If you recognize this person as an employee, please use the staff page on your Loxly instance to promote them to a higher clearance level!`, {
-			// 	subject: 'A new Account was Created! Please Verify.'
-			// })
-		} catch(err){
-			Log.error(err);
+			Log.error("Error when trying to create task "+JSON.stringify(task, null, 2))
 			res.status(500).json(err);
 		}
 	});

@@ -32,9 +32,13 @@ const corsOptions = {
 app.set('trust proxy', 1) // trust first proxy
 app.use(cors());
 app.use(cookieParser());
-app.use(express.json()); // for parsing application/json
+// app.use(express.bodyParser({limit: '50mb'}));
+app.use(express.json({
+	limit: '1mb',
+})); // for parsing application/json
 app.use(express.urlencoded({
-    extended: true
+	extended: true,
+	limit: '1mb'
 })); // for parsing application/x-www-form-urlencoded
 
 // custom routes

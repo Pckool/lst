@@ -5,7 +5,7 @@ import {PendingTask, Task} from '../../interfaces';
 import dayjs from 'dayjs'
 dayjs().format()
 export const actions = {
-	add(task: PendingTask) {
+	add(task: PendingTask): Promise<Task> {
 		return new Promise((resolve, reject) => {
 			// send the new coupon to the database
 
