@@ -26,6 +26,21 @@ export const actions = {
             return err;
         }
     },
+
+    async update(){
+        try{
+            let newUser: any = {}
+            const values = Object.values(state).map(st => st.value)
+            Object.keys(state).forEach((key, i) => {
+                newUser[key] = values[i]
+            })
+            let res = await userApi.update(newUser)
+            
+        } catch (err: any){
+            console.error(err);
+            throw err;
+        }
+    },
     
     async verify(username:string, code: number): Promise<any> {
         try{

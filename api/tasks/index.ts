@@ -72,10 +72,12 @@ function tasksInit(app: Express){
 	});
 
 
-	router.get('/get', (req: any, res: any) => {
+	router.post('/getall', async (req: any, res: any) => {
 		try{
-			let users = TDB.getAll()
-			return res.status(200).json(users);
+			const userId = req.body.id;
+			
+			const tasks = await TDB.getUserTasks(userId)
+			return res.status(200).json(tasks);
 		}
 		catch(err){
 			return res.status(500).json(err);

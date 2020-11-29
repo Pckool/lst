@@ -11,12 +11,10 @@
 					<div class="links">
 						<nice-link :text="link.text"  v-for="link in links" :key="link.id" :to="link.route"/>
 					</div>
-					<div id="profile-icon_nav">
-
-					</div>
+					<profile-img/>
 				</div>
 				<div class="title_cont">
-					<p class="title">{{currentTag}}</p>
+					<p class="title">{{taskNumber}} {{currentTag}}</p>
 					<div class="bar"></div>
 				</div>
 				<div class="search_side">
@@ -34,36 +32,55 @@
 </template>
 
 <script lang="ts">
+
+import {defineComponent, getCurrentInstance, onBeforeMount, onMounted, reactive, ref} from '@vue/composition-api'
 import Alert from '~/components/general/Alert.vue'
 import NiceLink from '~/components/general/niceLink.vue'
 import Navigation from '~/components/app/navigation.vue'
 import Search from '~/components/app/search.vue'
 import AddTaskBtn from '~/components/app/addTaskBtn.vue'
-import {defineComponent, getCurrentInstance, onBeforeMount, reactive, ref} from '@vue/composition-api'
-import { user } from '~/core'
+import ProfileImg from '~/components/app/profileImg.vue'
+import { tasks, user } from '~/core'
+import { emitters } from '~/core/emitters'
 const linkArr = [
 	{id: 0, route: '/app/', text: 'Dashboard'},
 	{id: 1, route: '/app/groups', text: 'Groups'},
 	{id: 2, route: '/app/calendar', text: 'Calendar'},
 ]
 export default defineComponent({
-	components: {Alert, Navigation, NiceLink, Search},
+	components: {Alert, Navigation, NiceLink, Search,
+	ProfileImg},
 	setup(props, ctx){
 		const verified = ref<boolean>(false)
 		const links = reactive(linkArr)
 		const currentTag = ref('Tasks');
+		const vue = getCurrentInstance();
+
 		onBeforeMount(() => {
 			verified.value = user.state.verified.value;
 			if(!verified.value){
 				console.log('user is unverified... redirecting to the verification page...')
-				const ctx = getCurrentInstance();
-				ctx.$router.push('/unverified')
+				
+				vue.$router.push('/unverified')
 			}
 		})
+
+		const taskNumber = ref<number>();
+		const getTasksAmo = () =>  tasks.collection.getGroup('all').value.length;
+		onMounted(async () => {
+			await tasks.load();
+			taskNumber.value = getTasksAmo();
+
+			emitters.tasks.NEW.on(() => {
+				taskNumber.value = getTasksAmo();
+			})
+		})
+		
 		return {
 			verified,
 			links,
-			currentTag
+			currentTag,
+			taskNumber
 		}
 	}
 })
@@ -113,14 +130,7 @@ export default defineComponent({
 				flex-flow: row nowrap;
 				
 			}
-			#profile-icon_nav{
-				height: 50px;
-				width: 50px;
-				margin-left: 1.5em;
-				background: white;
-				border-radius: 50%;
-				cursor: pointer;
-			}
+			
 		}
 		.title_cont{
 			pointer-events: all;

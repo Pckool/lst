@@ -1,4 +1,5 @@
 import {collection, state} from './state';
+import user from './../user';
 import routes from '../../api/api.tasks';
 import {PendingTask, Task} from '../../interfaces';
 import dayjs from 'dayjs'
@@ -89,7 +90,7 @@ export const actions = {
 	},
 	load() {
 		return new Promise((resolve, reject) => {
-			routes.getAll().catch(err => {
+			routes.getAll({id: user.state.id.value}).catch(err => {
 				reject(err);
 			}).then(res => {
 				console.log('got all tasks.');

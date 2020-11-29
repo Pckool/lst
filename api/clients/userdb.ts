@@ -38,7 +38,9 @@ export default {
     
     async update(_id: string, data: any) {
         try{
-            const res = await DB.update('users', _id, data);
+            console.log(`searching for %s in db...`, _id)
+            const user =(await DB.useIndexGetDocs<User>('find_by_id', _id))[0];
+            const res = await DB.update('users', user._id, data);
         } catch(err){
             throw err;
         }

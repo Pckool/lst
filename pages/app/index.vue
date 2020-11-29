@@ -23,7 +23,8 @@ export default defineComponent({
     setup(){
         const _tasks = reactive<Array<Task|PendingTask>>(tasksArr)
         const openNewTask = ref<boolean>(false)
-        onMounted(() => {
+        onMounted(async () => {
+            
             core.emitters.tasks.NEW.on(payload => {
                 openNewTask.value = true;
                 tasks.state.pending.set(payload);

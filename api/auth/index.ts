@@ -150,6 +150,27 @@ function authInit(app: Express){
 		}
 	});
 
+	router.post('/update', async (req: any, res: any) => {
+		try{
+			console.log('lol hi')
+			await UDB.update(req.body.id, req.body)
+			// let login = util.promisify(req.login)
+			// await login(user);
+			
+			res.status(200)
+			// req.login(user, err => {
+			// 	if(err) return res.status(400);
+				
+			// })
+			
+		}
+		catch(err){
+			console.error(err)
+			res.status(400).send(err);
+		}
+
+	});
+
 	router.post('/verify', async (req, res) => {
 		try{
 			let user = await UDB.findUser(req.body.username.toLowerCase());

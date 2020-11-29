@@ -11,6 +11,6 @@ export const fetchers = {
     add: async (data): Promise<any> => (await api.post('task/add', data)),
     remove: async (data) => (await api.post('task/add', data)),
     change: async (data): Promise<any> => (await api.post('task/update', data)),
-    getAll: async (): Promise<any> => (await api.get('tasks/get')),
+    getAll: async (data): Promise<any> => (await api.post('task/getall', data)),
 }
 export default fetchers;

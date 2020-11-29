@@ -15,9 +15,9 @@ export default {
         
     },
 
-    async getAll(): Promise<Task[]> {
+    async getUserTasks(userId: string): Promise<Task[]> {
         try{
-            return await DB.getAll('tasks');
+            return await DB.useIndexGetDocs('tasks_by_owner', userId);
         } catch(err){
             throw err;
         }

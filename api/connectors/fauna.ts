@@ -1,9 +1,14 @@
-import faunadb from 'faunadb';
-
+import faunadb, { Client, ExprArg, QueryOptions } from 'faunadb';
+import { Task } from '~/core';
+interface Query {
+    Create: (collection: any, data: any) => (ExprArg);
+    Collection: (name: string) => (ExprArg);
+    Delete: (name: string) => (ExprArg);
+}
 class Fauna {
     secret: string;
     q: any;
-    client: any;
+    client: Client;
     constructor(){
         this.q = faunadb.query;
         this.secret = (process.env.NODE_ENV==="production"?process.env.FAUNADB_SECRET:process.env.FAUNA_DEV_SECRET)||'';
@@ -44,7 +49,7 @@ class Fauna {
         }
         
     }
-    async getAll (collectionName: string): Promise<any[]> {
+    async getAll <T>(collectionName: string): Promise<T[]> {
         try{
             let page = (await this.client.query(
                 this.q.Paginate(this.q.Documents(this.q.Collection(collectionName))) // @ts-ignore
@@ -60,7 +65,7 @@ class Fauna {
         }
         
     }
-    async getOne (collectionName: string): Promise<any[]> {
+    async getOne <T>(collectionName: string): Promise<T[]> {
         try{
             let page = (await this.client.query(
                 this.q.Paginate(this.q.Documents(this.q.Collection(collectionName))) // @ts-ignore
@@ -70,7 +75,41 @@ class Fauna {
                 page.map((document) => this.q.Get(document)) // this wraps all of the document refs in a get function
             ))
 
-            return <any[]>ret.map((dataObj) => dataObj.data) // flattens the array to only have the data
+            return <any[]>ret.map((dataObj) => ({...dataObj.data, _id: dataObj.ref.id})) // flattens the array to only have the data
+        } catch(err){
+            throw err;
+        }
+        
+    }
+    async useIndex <T>(indexName: string, terms?: Array<string>|string): Promise<T[]> {
+        try{
+            const page = (await this.client.query(
+                this.q.Paginate(this.q.Match(this.q.Index(indexName), terms)) // @ts-ignore
+            )).data
+            
+            
+
+            return <any[]>page // flattens the array to only have the data
+        } catch(err){
+            throw err;
+        }
+        
+    }
+    async useIndexGetDocs <T>(indexName: string, terms?: Array<string>|string): Promise<T[]> {
+        try{
+            const pageOfDocs: any = (await this.client.query(
+                this.q.Map(
+                    this.q.Paginate(this.q.Match(this.q.Index(indexName), terms)),
+                    this.q.Lambda((data) => this.q.Get(this.q.Var('data')))
+                )
+            ))
+            
+            if(pageOfDocs.data){
+                
+                return <T[]>pageOfDocs.data.map((dataObj) => ({...dataObj.data, _id: dataObj.ref.id})) // flattens the array to only have the data
+            }
+
+            
         } catch(err){
             throw err;
         }

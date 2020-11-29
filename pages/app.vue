@@ -5,11 +5,13 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from '@vue/composition-api'
-
+import {defineComponent, onMounted} from '@vue/composition-api'
+import {tasks} from '~/core'
 export default defineComponent({
     layout: 'secure',
-    
+    setup(){
+        
+    }
 })
 </script>
 
