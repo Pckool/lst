@@ -1,9 +1,9 @@
 <template>
 	<div id="app">
-		<div id="app_side">
+		<div id="app_side" v-if="!loading">
 			<add-task-btn/>
 		</div>
-		<div id="app_core">
+		<div id="app_core" v-if="!loading">
 			
 			<div class="top_cont">
 				
@@ -24,7 +24,7 @@
 			</div>
 			
 			
-			<nuxt />
+			<nuxt/>
 		</div>
 		<alert/>
 		
@@ -54,6 +54,7 @@ export default defineComponent({
 		const verified = ref<boolean>(false)
 		const links = reactive(linkArr)
 		const currentTag = ref('Tasks');
+		const loading = ref<boolean>(true)
 		const vue = getCurrentInstance();
 
 		onBeforeMount(() => {
@@ -66,12 +67,18 @@ export default defineComponent({
 		})
 
 		const taskNumber = ref<number>();
-		const getTasksAmo = () =>  tasks.collection.getGroup('all').value.length;
+		const getTasksAmo = () =>  tasks.collection.getGroup('default').value.length;
 		onMounted(async () => {
-			await tasks.load();
-			taskNumber.value = getTasksAmo();
-
-			emitters.tasks.NEW.on(() => {
+			vue.$nextTick(async () => {
+				vue.$nuxt.$loading.start()
+				await tasks.load();
+				loading.value = false;
+				vue.$nuxt.$loading.finish()
+				taskNumber.value = getTasksAmo();
+			})
+			
+			
+			emitters.tasks.CREATED.on(() => {
 				taskNumber.value = getTasksAmo();
 			})
 		})
@@ -80,7 +87,8 @@ export default defineComponent({
 			verified,
 			links,
 			currentTag,
-			taskNumber
+			taskNumber,
+			loading
 		}
 	}
 })

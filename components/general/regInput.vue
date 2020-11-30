@@ -1,7 +1,10 @@
 <template>
-    <h1 ref="el" class="text_large" @blur="check" @focus="recordCaret" @input="input" contenteditable="true" @mousewheel="$emit('mousewheel', $event)">
-        {{text}}
-    </h1>
+    <span class="text_regular_cont">
+         <span ref="el" class="text_regular" @blur="check" @focus="recordCaret" @input="input" contenteditable="true" @mousewheel="$emit('mousewheel', $event)">
+            {{text}}
+        </span>
+    </span>
+   
 
 </template>
 <script lang="ts">
@@ -71,21 +74,22 @@ export default defineComponent({
     }
 })
 </script>
-<style lang="scss">
-.text_large{
-    margin: 0.5em 0 0 0;
-    transform: all 0.2s var(--ease);
-    padding-bottom: 1.3em;
-    letter-spacing: 0.2em;
-    font-weight: 900;
-    font-size: 95px;
-    min-height: 95px;
-    max-height: 350px;
-    color: var(--grey);
-    &:focus{
-        color: var(--white);
-        outline: none;
-        // box-shadow: 0 0 0 0;
+<style lang="scss" scoped>
+.text_regular_cont{
+    .text_regular{
+        transform: all 0.2s var(--ease);
+        font-weight: 600;
+        display: inline-block;
+        min-height: 10px;
+        max-height: 350px;
+        width: 100%;
+        // color: var(--grey);
+        &:focus{
+            // color: var(--white);
+            outline: none;
+            // box-shadow: 0 0 0 0;
+        }
     }
 }
+
 </style>

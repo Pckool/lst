@@ -9,10 +9,8 @@ dayjs().format();
 
 export const collection = App.Collection<Task>()(collection => ({
     groups: {
-        'all': collection.Group(), 
-        'active': collection.Group(), 
-        'cancelled': collection.Group(), 
-        'completed': collection.Group()
+        'complete': collection.Group(), 
+        'inprogress': collection.Group()
     },
     selectors: {
         
@@ -25,14 +23,18 @@ export const state = {
 }
 
 export const computed = {
+    today: App.Computed<Task[]>(() => {
+        const d = new Date()
+        d.setHours(0,0,0);
+        const col = Object.values(collection.data).map(data => data.value)
+        return col.filter(task => dayjs(task.ts).isSame(d, 'date'))
+    })
     // thisWeek: App.Computed<Task[]>(() => {
 
     //     var currDate = new Date();
     //     var weekAway = new Date();
     //     currDate.setMinutes(0);
-    //     currDate.setHours(0);
-    //     weekAway.setMinutes(0);
-    //     weekAway.setHours(0);
+    //     currDate.setHours(0, 0, 0);
 
     //     weekAway.setDate(currDate.getDate() + 7);
     //     return collection.getGroup('all').output
@@ -45,8 +47,7 @@ export const computed = {
     // thisMonth: App.Computed<Task[]>(() => {
     //     var currDate = new Date();
     //     var weekAway = new Date();
-    //     currDate.setMinutes(0);
-    //     currDate.setHours(0);
+    //     currDate.setHours(0, 0, 0);
     //     weekAway.setDate(currDate.getDate() + 7);
 
     //     return collection.getGroup('all').output

@@ -1,3 +1,7 @@
+enum TaskStatus {
+    'complete' = 'complete', 
+    'inprogress' = 'inprogress'
+}
 export interface Task {
     _id?: string;
     id: string;

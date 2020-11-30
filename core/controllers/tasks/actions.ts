@@ -8,10 +8,12 @@ export const actions = {
 	add(task: PendingTask): Promise<Task> {
 		return new Promise((resolve, reject) => {
 			// send the new coupon to the database
-
+			if(!task.status){
+				task.status = 'inprogress'
+			}
 			routes.add(task).then((res:any) => {
 				// collect the new coupon
-				collection.collect(res.data, 'all');
+				collection.collect(res.data, ['default', res.data.status]);
 				resolve(res.data);
 			}).catch(err => {
 				reject(err)
@@ -24,7 +26,7 @@ export const actions = {
 			routes.remove(task).then(res => {
 
 				// console.log('Deleting' + task.id);
-				collection.removeFromGroups(task.id, 'all');
+				collection.remove(task.id).everywhere
 				resolve(res);
 			}).catch(err => {
 
@@ -33,33 +35,18 @@ export const actions = {
 			});
 		})
 	},
-	change(task: Task) {
-		return new Promise((resolve, reject) => {
-			// send the new coupon to the database
-			routes.change(task).then((res:any) => {
-
-				// console.log('real task');
-				// console.log(task)
-
-				collection.collect(task, 'all');
-
-				resolve(res);
-			}).catch(err => {
-
-				reject(err)
-			});
-		})
-	},
-	async update(task: Task): Promise<Error|undefined> {
+	async update(task: Task): Promise<void> {
 		try{
-			// send the new coupon to the database
 			await routes.change(task)
-
-			collection.collect(task, 'all');
+			// collection.remove(task.id).everywhere
+			// collection.collect(task, ['default', task.status]);
+			collection.update(task.id, task)
+			collection.put(task.id, task.status)
+			console.log(collection, task)
 
 			// return res;
 		} catch(err) {
-			return err
+			throw err
 		};
 		
 	},
@@ -70,9 +57,6 @@ export const actions = {
 
 		return task.value;
 	},
-	getGroup(group_name: string){
-		return collection.getGroup(group_name).output;
-	},
 
 	
 	findTask(id: string) {
@@ -81,7 +65,7 @@ export const actions = {
 	findByDate(_date: string|number): Task[]|undefined{
 		try{
 			let date = new Date(_date);
-			return collection.getGroup('all').output.filter(task => dayjs(task.ts).isSame(date, 'date'));
+			return collection.getGroup('default').output.filter(task => dayjs(task.ts).isSame(date, 'date'));
 		} catch(err){
 
 		}
@@ -94,14 +78,18 @@ export const actions = {
 				reject(err);
 			}).then(res => {
 				console.log('got all tasks.');
-				collection.collect(res.data, 'all');
+				
+				res.data.forEach((task: Task) => {
+					collection.collect(task, ['default', task.status]);
+				})
+				
 				resolve(undefined);
 			}).catch(err => {
 				reject(err);
 			});
 		});
 	},
-	length: () => collection.getGroup('all').value.length,
+	length: () => collection.getGroup('default').value.length,
 	addData(data: any) {
 		
 		state.pending.set({

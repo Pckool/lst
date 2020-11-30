@@ -1,35 +1,75 @@
 <template>
 	<div id="inner-tasks">
-		<transition-group name="tasks" class="task-list">
-			<div class="task" v-for="task in tasks" :key="task.id">
-				<span @click="deleteTask(task)" :id="task.id"><img src="/images/more.svg" alt=""></span>
-				<span>{{task.text}}</span>
+		<div class="tasks_cont">
+			<h1>tasks</h1>
+			<small class="small-header">in progress</small>
+			<transition-group name="tasks" class="task-list">
+				<task v-for="taskId in tasks" :key="taskId" :taskId="taskId" @change="changeSections"/>
+			</transition-group>
+			<small class="small-header">complete</small>
+			<transition-group name="tasks" class="task-list">
+				<task v-for="taskId in completedTaskIds" :key="taskId" :taskId="taskId" @change="changeSections"/>
+			</transition-group>
+			
+		</div>
+		<div class="right-tasks_cont">
+			<div class="today_cont">
+				<small>today</small>
+				<div class="today-inner">
+					<transition-group name="tasks" class="task-list">
+						<task v-for="taskId in todayTaskIds" :key="'today_'+taskId" :taskId="taskId" @change="changeSections"/>
+						
+					</transition-group>
+					<h4 v-if="todayTaskIds.length === 0">No Tasks today!</h4>
+				</div>
+				
 			</div>
-		</transition-group>
+			
+		</div>
+		
 		<transition name="new-task">
 			<new-task v-if="openNewTask" @close="openNewTask=false"/>
 		</transition>
 	</div>
 </template>
 <script lang="ts">
-import hash from 'object-hash'
-import {defineComponent, onMounted, reactive, ref} from '@vue/composition-api'
+import {defineComponent, getCurrentInstance, onBeforeMount, onMounted, onUpdated, reactive, ref} from '@vue/composition-api'
 import core, { PendingTask, Task, tasks } from '~/core'
 import newTask from '~/components/app/newTask.vue'
+import TaskComp from '~/components/app/task.vue'
+import svgIcon from '~/components/general/svgIcon.vue'
 
 export default defineComponent({
-	components: {newTask},
+	components: {newTask, svgIcon, Task: TaskComp},
 	setup(){
-		const _tasks = reactive<Array<Task>>(tasks.collection.getGroup('all').output)
+		const ids = [...tasks.collection.getGroup('inprogress').index]
+		const idsComp = [...tasks.collection.getGroup('completed').index]
+		const taskIds = ref<Array<string|number>>(ids)
+		const completedTaskIds = ref<Array<string|number>>(idsComp)
+		const todayTaskIds = ref<Array<Task>>(tasks.state.today.value)
 		const openNewTask = ref<boolean>(false)
+		const vue = getCurrentInstance();
+
 		const populateGrid = () => {
-			_tasks.length = 0;
-			tasks.collection.getGroup('all').output.forEach(task => {
-				_tasks.push(task)
-			})
+			taskIds.value.length = 0;
+			completedTaskIds.value.length = 0;
+			console.log('populating list')
+			console.log(tasks.collection)
+			tasks.collection.getGroup('inprogress').value.forEach(taskId => 
+				taskIds.value.push(taskId)
+			)
+			tasks.collection.getGroup('complete').value.forEach(taskId => 
+				completedTaskIds.value.push(taskId)
+			)
+			// .output.forEach(task => {
+				
+			// })
 		}
 		onMounted(async () => {
-			populateGrid()
+			vue.$nextTick(() => {
+				populateGrid()
+			})
+			
 			core.emitters.tasks.NEW.on(payload => {
 				openNewTask.value = true;
 				tasks.state.pending.set(payload);
@@ -46,25 +86,36 @@ export default defineComponent({
 				populateGrid()
 			})
 		})
-		const deleteTask = (task: Task) => {
-			console.log('yup')
-			const i = _tasks.indexOf(task)
-			_tasks.filter(task => task !== tasks[i])
+
+		const changeSections = (payload) => {
+			populateGrid()
+		}
+		// onUpdated(() => {
+		// 	populateGrid()
+		// })
+
+		// TODO: This doesn't make a lot of sense. Clean it up
+		const deleteTask = (taskId: string|number) => {
+			const i = taskIds.value.indexOf(taskId)
+			taskIds.value.filter(task => task !== tasks[i])
 			let loop = 0;
 			let loopTask = null
 			do{
-				_tasks.pop()
+				taskIds.value.pop()
 				if(loop > 0){
-					_tasks.push(task)
+					taskIds.value.push(taskId)
 				}
 				loop++
-			} while(loop < _tasks.length)
+			} while(loop < taskIds.value.length)
 		}
 		
 		return {
-			tasks: _tasks,
+			tasks: taskIds,
 			deleteTask,
-			openNewTask
+			openNewTask,
+			completedTaskIds,
+			changeSections,
+			todayTaskIds,
 		}
 	}
 })
@@ -73,25 +124,62 @@ export default defineComponent({
 #inner-tasks{
 	position: relative;
 	flex-grow: 1;
-	.task-list{
+	display: flex;
+	flex-flow: row wrap;
+	.tasks_cont{
+		flex-shrink: 1;
 		padding: 6em 6em;
 		display: flex;
-		flex-flow: column wrap;
-		.task{
-			height: 90px;
-			padding: 2em 2.5em ;
-			margin-bottom: 1em;
-			width: 400px;
-			border-radius: 25px;
-			background: var(--blueGrey);
+    	flex-flow: column nowrap;
+		h1{
+			margin-top: 0px;
+			margin-bottom: 0.5em;
+		}
+		.small-header{
+			margin-top: 0.6em;
+			margin-bottom: 0.9em;
+			color: var(--darkGrey);
+		}
+		.task-list{
+			
+			display: flex;
+			flex-flow: column wrap;
+			
 		}
 	}
+	.right-tasks_cont{
+		padding: 6em 6em;
+		flex-grow: 1;
+		.today_cont{
+			position: relative;
+			
+			small{
+				transform: rotate(-90deg) translateX(50%);
+				position: absolute;
+				top: 100%;
+				left: 0;
+				margin-left: -13px;
+				padding-bottom: 1em;
+			}
+			.today-inner{
+				padding-left: 13px;
+				h4{
+					margin: 0;
+					color: var(--darkGrey);
+				}
+		}
+			}
+			
+		
+	}
+	
 	
 	.tasks-enter-active, .tasks-leave-active{
 		transition: all 0.2s var(--ease);
 	}
 	.tasks-enter, .tasks-leave-to{
 		width: 0px;
+		height: 0px;
 	}
 	.new-task-enter-active, .new-task-leave-active{
 		transition: all 0.2s var(--ease);

@@ -60,10 +60,27 @@ function tasksInit(app: Express){
 			const userId = req.body.id;
 			
 			const tasks = await TDB.getUserTasks(userId)
-			return res.status(200).json(tasks);
+			res.status(200).json(tasks);
 		}
 		catch(err){
-			return res.status(500).json(err);
+			console.error(err)
+			res.status(500).json(err);
+		}
+		
+	});
+
+	router.post('/update', async (req: any, res: any) => {
+		try{
+			const taskId = req.body._id;
+			let task = req.body;
+			delete task._id;
+			
+			const tasks = await TDB.update(taskId, task)
+			res.status(200).json(task);
+		}
+		catch(err){
+			console.error(err)
+			res.status(500).json(err);
 		}
 		
 	});

@@ -34,11 +34,11 @@ app.use(cors());
 app.use(cookieParser());
 // app.use(express.bodyParser({limit: '50mb'}));
 app.use(express.json({
-	limit: '1mb',
+	limit: '2mb',
 })); // for parsing application/json
 app.use(express.urlencoded({
 	extended: true,
-	limit: '1mb'
+	limit: '2mb'
 })); // for parsing application/x-www-form-urlencoded
 
 // custom routes

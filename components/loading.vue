@@ -1,7 +1,9 @@
 <template>
-	<div class="loading-page" v-if="loading">
-		<p>Loading...</p>
-	</div>
+	<transition name="loading">
+		<div class="loading-page" v-if="loading">
+			<p>Loading...</p>
+		</div>
+	</transition>
 </template>
 <script lang="ts">
 import {defineComponent, ref} from '@vue/composition-api'
@@ -29,10 +31,25 @@ export default defineComponent({
 		left: 0;
 		width: 100%;
 		height: 100%;
-		background: rgba(255, 255, 255, 0.8);
+		background: var(--black);
 		text-align: center;
-		padding-top: 200px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 		font-size: 30px;
-		font-family: sans-serif;
+		font-family: 'Inter', sans-serif;
+		z-index: 1000;
+		opacity: 1;
+		transform: translateY(0%);
+	}
+	.loading-leave-active{
+		transition: all 0.4s var(--ease);
+	}
+	.loading-enter-active{
+		transition: all 0.4s var(--ease);
+	}
+	.loading-enter, .loading-leave-to{
+		// opacity: 0;
+		transform: translateY(100%);
 	}
 </style>

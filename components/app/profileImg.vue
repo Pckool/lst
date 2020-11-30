@@ -62,19 +62,23 @@ export default defineComponent({
 				imgData.value = user.state.img_url.value;
 			}
 		}
-		onMounted(() => {
-			imgData.value = user.state.img_url.value;
-			// input.value.onchange = (e) => {
-			// 	imgChange(e)
-			// }
-		})
-		watch(imgData, () => {
+		const checkIfImgIsSet = () => {
 			if(imgData.value && imgData.value !== ""){
 				cont.value.setAttribute('hasimage', `${true}`);
 			} else {
 				cont.value.setAttribute('hasimage', `${false}`);
 			}
+		}
+		watch(imgData, () => checkIfImgIsSet)
+		onMounted(() => {
+			imgData.value = user.state.img_url.value;
+			checkIfImgIsSet()
+			
+			// input.value.onchange = (e) => {
+			// 	imgChange(e)
+			// }
 		})
+		
 		return {
 			choose,
 			input,
@@ -92,18 +96,18 @@ export default defineComponent({
 	height: 50px;
 	width: 50px;
 	margin-left: 1.5em;
-	
 	position: relative;
 	.profile-icon{
 		overflow: hidden;
 		border-radius: 50%;
-		background: white;
+		background: var(--white);
 		position: relative;
 		height: 100%;
 		width: 100%;
 		top: 0;
 		left: 0;
 		cursor: pointer;
+		transition: all 0.2s var(--ease);
 		.overlay{
 			background: rgba($color: #000000, $alpha: 0.4);
 			height: 110%;
@@ -138,6 +142,11 @@ export default defineComponent({
 				opacity: 1;
 			}
 			
+		}
+	}
+	&[hasimage="true"]{
+		.profile-icon{
+			background: rgba($color: #000000, $alpha: 0.0);
 		}
 	}
 	

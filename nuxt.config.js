@@ -43,7 +43,8 @@ export default {
   ** https://nuxtjs.org/guide/plugins
   */
   plugins: [
-    './plugins/composition-api'
+    './plugins/composition-api',
+    './plugins/global-components'
   ],
   /*
   ** Auto import components

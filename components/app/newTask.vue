@@ -18,10 +18,11 @@
 			</div>
 			<div class="in-cont">
 				<label>When is it due?</label>
-				<div class="in-row">
+				<div class="in-row spread">
 					<!-- <input type="date" v-model="date"> -->
 					<date-input v-model="date" />
-					<input type="time" v-model="time">
+					<time-input v-model="time" />
+					<!-- <input type="time" v-model="time"> -->
 				</div>
 				
 			</div>
@@ -36,9 +37,10 @@ import DynamicInput from '~/components/general/dynamicInput.vue'
 import SvgIcon from '~/components/general/svgIcon.vue'
 import LargeInput from '~/components/general/largeInput.vue'
 import DateInput from '~/components/general/dateInput.vue'
+import TimeInput from '~/components/general/timeInput.vue'
 
 export default defineComponent({
-	components: {DynamicInput, SvgIcon, LargeInput, DateInput},
+	components: {DynamicInput, SvgIcon, LargeInput, DateInput, TimeInput},
 	setup(props, ctx){
 		const task = reactive<PendingTask>(tasks.state.pending.value)
 		const text = ref<string>('Pick up dog food')
@@ -55,6 +57,7 @@ export default defineComponent({
 			task.ts = newTs.getTime()
 			task.text = text.value
 			task.owner = user.state.id.value
+			task.status = 'inprogress'
 			tasks.add(task).then((genTask: Task) => {
 				core.emitters.tasks.CREATED.emit(genTask);
 				ctx.emit('close')
@@ -80,6 +83,8 @@ export default defineComponent({
 	height: 100%;
 	background: var(--darkBlueGrey);
 	border-radius: 25px 25px 0 0;
+	display: flex;
+    flex-flow: column;
 	
 	.header{
 		display: flex;
@@ -119,7 +124,7 @@ export default defineComponent({
 		padding-bottom: 1em;
 		.in-row{
 			display: flex;
-			flex-flow: row;
+			flex-flow: row wrap;
 			margin-top: 1em;
 			input{
 				min-height: 0;
@@ -132,9 +137,14 @@ export default defineComponent({
 		}
 	}
 	.body{
+		overflow-y: auto;
+		flex-shrink: 1;
 		padding: 5em 6em 1em 6em;
 		
 		
+	}
+	.spread{
+		justify-content: space-between;
 	}
 }    
 </style>
