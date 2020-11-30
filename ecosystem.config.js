@@ -1,20 +1,20 @@
 module.exports = {
   apps: [{
-    name: 'portfolio',
-    script: 'app.js',
-    watch: '.'
+    name: 'lst',
+    script: 'yarn',
+    args: 'start'
   }],
 
   deploy: {
     production: {
-      user: 'portfilio',
+      user: 'lst',
       host: 'philippec.me',
       ref: 'origin/master',
       repo: 'git@github.com:Pckool/lst.git',
-      path: '/web',
+      path: '/var/web',
       'pre-deploy-local': '',
       'post-deploy': 'yarn install && yarn build && pm2 startOrRestart ecosystem.config.js --env production',
-      'pre-setup': ''
+      'pre-setup': 'mkdir lst && cd lst/'
     }
   }
 };

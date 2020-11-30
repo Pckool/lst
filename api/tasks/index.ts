@@ -31,10 +31,7 @@ function tasksInit(app: Express){
 			
 			// if (err) throw err;
 			task = {
-				text: req.body.text,
-				ts: req.body.ts,
-				tag: req.body.tag,
-				owner: req.body.owner,
+				...req.body,
 				created: Date.now(),
 				id: `${Math.random().toString(36).substr(2, 9)}_${Math.random().toString(36).substr(2, 12)}`,
 			}
