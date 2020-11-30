@@ -9,7 +9,8 @@
     "export": "nuxt-ts export",
     "serve": "nuxt-ts serve",
     "lint:js": "eslint --ext .js,.vue --ignore-path .gitignore .",
-    "lint": "yarn lint:js"
+    "lint": "yarn lint:js",
+    "deploy": "git push && pm2 deploy production"
   },
   "dependencies": {
     "@nuxt/typescript-runtime": "^0.4.10",
