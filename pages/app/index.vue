@@ -1,28 +1,21 @@
 <template>
 	<div id="inner-tasks">
+		<h1 class="tasks-header">tasks</h1>
 		<div class="tasks_cont">
-			<h1>tasks</h1>
-			<small class="small-header">in progress</small>
-			<transition-group name="tasks" class="task-list">
-				<task v-for="taskId in tasks" :key="taskId" :taskId="taskId" @change="changeSections"/>
-			</transition-group>
-			<small class="small-header">complete</small>
-			<transition-group name="tasks" class="task-list">
-				<task v-for="taskId in completedTaskIds" :key="taskId" :taskId="taskId" @change="changeSections"/>
-			</transition-group>
 			
-		</div>
-		<div class="right-tasks_cont">
-			<div class="today_cont">
-				<small>today</small>
-				<div class="today-inner">
-					<transition-group name="tasks" class="task-list">
-						<task v-for="taskId in todayTaskIds" :key="'today_'+taskId" :taskId="taskId" @change="changeSections"/>
-						
-					</transition-group>
-					<h4 v-if="todayTaskIds.length === 0">No Tasks today!</h4>
-				</div>
-				
+			<div class="tasks-inner">
+				<small class="small-header">in progress</small>
+				<transition-group name="tasks" class="task-list">
+					<task v-for="taskId in tasks" :key="taskId" :taskId="taskId" @change="changeSections"/>
+				</transition-group>
+				<span class="no-data" v-if="!tasks.length">Add a task by hovering over the plus icon</span>
+			</div>
+			<div class="tasks-inner">
+				<small class="small-header">complete</small>
+				<transition-group name="tasks" class="task-list">
+					<task v-for="taskId in completed" :key="taskId" :taskId="taskId" @change="changeSections"/>
+				</transition-group>
+				<span class="no-data" v-if="!completed.length">Complete a task by clicking on the circle on the left side of a task</span>
 			</div>
 			
 		</div>
@@ -46,7 +39,7 @@ export default defineComponent({
 		const idsComp = [...tasks.collection.getGroup('completed').index]
 		const taskIds = ref<Array<string|number>>(ids)
 		const completedTaskIds = ref<Array<string|number>>(idsComp)
-		const todayTaskIds = ref<Array<Task>>(tasks.state.today.value)
+		const todayTaskIds = ref<Array<string|number>>(tasks.state.today.value.map(task => task.id))
 		const openNewTask = ref<boolean>(false)
 		const vue = getCurrentInstance();
 
@@ -54,13 +47,13 @@ export default defineComponent({
 			taskIds.value.length = 0;
 			completedTaskIds.value.length = 0;
 			console.log('populating list')
-			console.log(tasks.collection)
 			tasks.collection.getGroup('inprogress').value.forEach(taskId => 
 				taskIds.value.push(taskId)
 			)
 			tasks.collection.getGroup('complete').value.forEach(taskId => 
 				completedTaskIds.value.push(taskId)
 			)
+			todayTaskIds.value = tasks.state.today.value.map(task => task.id)
 			// .output.forEach(task => {
 				
 			// })
@@ -113,7 +106,7 @@ export default defineComponent({
 			tasks: taskIds,
 			deleteTask,
 			openNewTask,
-			completedTaskIds,
+			completed: completedTaskIds,
 			changeSections,
 			todayTaskIds,
 		}
@@ -125,52 +118,41 @@ export default defineComponent({
 	position: relative;
 	flex-grow: 1;
 	display: flex;
-	flex-flow: row wrap;
+	flex-flow: column wrap;
+	h1.tasks-header{
+		margin: 0;
+		padding: 0em 0em 0.5em 1em;
+	}
 	.tasks_cont{
 		flex-shrink: 1;
-		padding: 6em 6em;
+		padding: 6em 6em 0em 6em;
 		display: flex;
-    	flex-flow: column nowrap;
-		h1{
-			margin-top: 0px;
-			margin-bottom: 0.5em;
-		}
-		.small-header{
-			margin-top: 0.6em;
-			margin-bottom: 0.9em;
-			color: var(--darkGrey);
-		}
-		.task-list{
-			
-			display: flex;
-			flex-flow: column wrap;
-			
-		}
-	}
-	.right-tasks_cont{
-		padding: 6em 6em;
-		flex-grow: 1;
-		.today_cont{
-			position: relative;
-			
-			small{
-				transform: rotate(-90deg) translateX(50%);
-				position: absolute;
-				top: 100%;
-				left: 0;
-				margin-left: -13px;
-				padding-bottom: 1em;
-			}
-			.today-inner{
-				padding-left: 13px;
-				h4{
-					margin: 0;
-					color: var(--darkGrey);
-				}
-		}
-			}
-			
+		flex-flow: row wrap;
+		justify-content: space-around;
 		
+		
+		.task-list{
+			flex-flow: column nowrap;
+			display: flex;
+			max-height: 53%;
+    		overflow: auto;
+			padding: 0.5em;
+			min-width: 400px;
+		}
+		.tasks-inner{
+			margin: 0 1em;
+			.small-header{
+				margin-top: 0.6em;
+				margin-bottom: 0.9em;
+				color: var(--darkGrey);
+				user-select: none;
+			}
+		}
+		.no-data{
+			color: var(--darkGrey);
+			user-select: none;
+			word-wrap: normal;
+		}
 	}
 	
 	

@@ -9,8 +9,8 @@
 				
 				<div class="right_cont">
 					<div class="links">
-						<nice-link :text="link.text"  v-for="link in links" :key="link.id" :to="link.route"/>
-					</div>
+							<nice-link :text="link.text"  v-for="link in links" :key="link.id" :to="link.route"/>
+					</div>	
 					<profile-img/>
 				</div>
 				<div class="title_cont">
@@ -25,6 +25,7 @@
 			
 			
 			<nuxt/>
+			
 		</div>
 		<alert/>
 		
@@ -42,9 +43,9 @@ import AddTaskBtn from '~/components/app/addTaskBtn.vue'
 import ProfileImg from '~/components/app/profileImg.vue'
 import { tasks, user } from '~/core'
 import { emitters } from '~/core/emitters'
+import anime from 'animejs' 
 const linkArr = [
 	{id: 0, route: '/app/', text: 'Dashboard'},
-	{id: 1, route: '/app/groups', text: 'Groups'},
 	{id: 2, route: '/app/calendar', text: 'Calendar'},
 ]
 export default defineComponent({
@@ -75,6 +76,14 @@ export default defineComponent({
 				loading.value = false;
 				vue.$nuxt.$loading.finish()
 				taskNumber.value = getTasksAmo();
+				anime({
+					targets: vue.$el.querySelectorAll('.link'),
+					translateX: ['50%', '0%'],
+					duration: 2000,
+					opacity: [0, 1],
+					delay: anime.stagger(100, {start: 400}),
+					easing: 'easeInOutQuad'
+				})
 			})
 			
 			
@@ -97,6 +106,7 @@ export default defineComponent({
 #app{
 	height: 100%;
 	min-height: 100vh;
+	max-height: 100vh;
 	margin: auto;
 	position: relative;
 	top: 0;
@@ -114,6 +124,7 @@ export default defineComponent({
 		display: flex;
 		flex-flow: column;
 		flex-grow: 1;
+
 	}
 	.top_cont{
 		position: relative;
@@ -176,7 +187,21 @@ export default defineComponent({
 		
 		
 	}		
-	
+	.nav-enter-active, .nav-leave-active{
+		transition: all 0.2s var(--ease);
+	}
+	.nav-enter, .nav-leave-to{
+		width: 0px;
+		height: 0px;
+	}
+
+	.page-enter-active, .page-leave-active{
+		transition: all 0.4s var(--ease);
+	}
+	.page-enter, .page-leave-to{
+		opacity: 0;
+		transform: translateY(30%);
+	}
 				
 }
 </style>

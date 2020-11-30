@@ -1,7 +1,7 @@
 <template>
-    <div id="app-inner">
+    <transition id="app-inner" name="page">
         <nuxt-child/>
-    </div>
+    </transition>
 </template>
 
 <script lang="ts">
@@ -19,6 +19,6 @@ export default defineComponent({
 #app-inner{
     display: flex;
     flex-grow: 1;
-    
+    opacity: 1;
 }   
 </style>

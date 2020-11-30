@@ -111,7 +111,8 @@ export default defineComponent({
 	border-radius: 25px;
 	color: var(--black);
 	font-weight: 600;
-	overflow: hidden;
+	min-height: fit-content;
+    height: max-content;
 	.loading-bar{
 		position: absolute;
 		bottom: 0;

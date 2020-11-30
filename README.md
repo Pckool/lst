@@ -1,4 +1,14 @@
-# lst-nuxt
+# lst
+
+## Description
+A task manager/todo list. Each component was hand crafted!
+
+## Tech Stack
+- Nuxtjs
+- Vuejs
+- Faunadb
+- expressjs
+- SASS (SCSS variant)
 
 ## Build Setup
 

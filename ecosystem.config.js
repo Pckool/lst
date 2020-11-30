@@ -14,7 +14,7 @@ module.exports = {
       path: '/var/web/lst',
       'pre-deploy-local': '',
       'post-deploy': 'yarn install && yarn build && pm2 startOrRestart ecosystem.config.js --env production',
-      'pre-setup': 'mkdir /var/web/lst'
+      'pre-setup': 'mkdir /var/web/lst || echo "file exists!"'
     }
   }
 };
