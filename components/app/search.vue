@@ -13,8 +13,8 @@
 		</div>
 		<div class="search-dropdown_cont" v-if="searching">
 			<div class="search-result" v-for="task in tasks" :key="task.id" @click="selected(task.id)">
-				<small>{{task.name}}</small>
-				<small class="date">{{`${(new Date(task.ts)).getMonth()+1}/${(new Date(task.date)).getFullYear()}`}}</small>
+				<small class="search-text">{{task.text}}</small>
+				<small class="date">{{`${(new Date(task.ts)).getMonth()+1}/${(new Date(task.ts)).getFullYear()}`}}</small>
 			</div>
 			<div v-if="noMatch">
 				<small class="no-match">No Event Matched your Search...</small>
@@ -106,11 +106,16 @@ export default Vue.extend({
 		position: absolute;
 		top: 100%;
 		padding: 1rem;
-		background: var(--darkGRey);
+		background: var(--dark);
 		z-index: 300;
 		width: 100%;
 		max-height: 400px;
 		overflow-y: auto;
+		.search-text{
+			word-break: break-all;
+			white-space: normal;
+			text-overflow: ellipsis;
+		}
 		small{
 			letter-spacing: 1px;
 			display: block;
@@ -125,7 +130,7 @@ export default Vue.extend({
 		.search-result{
 			padding: 0.5rem 0.2rem;
 			cursor: pointer;
-			color: var(--faded);
+			color: var(--grey);
 			&:hover{
 				color: var(--white);
 			}

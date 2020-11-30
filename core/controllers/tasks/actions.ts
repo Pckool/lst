@@ -65,7 +65,33 @@ export const actions = {
 	findByDate(_date: string|number): Task[]|undefined{
 		try{
 			let date = new Date(_date);
-			return collection.getGroup('default').output.filter(task => dayjs(task.ts).isSame(date, 'date'));
+			return Object.values(collection.data).map(data => data.value).filter(task => dayjs(task.ts).isSame(date, 'date'));
+		} catch(err){
+
+		}
+		
+
+	},
+	findByMonth(month: number): Task[]|undefined{
+		try{
+			const date = new Date();
+			date.setMonth(month, 1)
+			date.setHours(0, 0, 0)
+			let tasks = Object.values(collection.data).map(data => data.value)
+			return tasks.filter(task => dayjs(task.ts).isSame(date.toLocaleDateString(), 'month'));
+		} catch(err){
+
+		}
+		
+
+	},
+	findByYear(year: number): Task[]|undefined{
+		try{
+			const date = new Date();
+			date.setFullYear(year, 0, 1)
+			date.setHours(0, 0, 0)
+
+			return Object.values(collection.data).map(data => data.value).filter(task => dayjs(task.ts).isSame(date, 'year'));
 		} catch(err){
 
 		}

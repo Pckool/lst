@@ -1,5 +1,5 @@
 <template>
-	<span class="custom-icon">
+	<span class="custom-icon" @click="$emit('click')">
 	</span>
 </template>
 <script lang="ts">

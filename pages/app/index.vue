@@ -20,27 +20,25 @@
 			
 		</div>
 		
-		<transition name="new-task">
-			<new-task v-if="openNewTask" @close="openNewTask=false"/>
-		</transition>
+		
 	</div>
 </template>
 <script lang="ts">
 import {defineComponent, getCurrentInstance, onBeforeMount, onMounted, onUpdated, reactive, ref} from '@vue/composition-api'
 import core, { PendingTask, Task, tasks } from '~/core'
-import newTask from '~/components/app/newTask.vue'
+
 import TaskComp from '~/components/app/task.vue'
 import svgIcon from '~/components/general/svgIcon.vue'
 
 export default defineComponent({
-	components: {newTask, svgIcon, Task: TaskComp},
+	components: {svgIcon, Task: TaskComp},
 	setup(){
 		const ids = [...tasks.collection.getGroup('inprogress').index]
 		const idsComp = [...tasks.collection.getGroup('completed').index]
 		const taskIds = ref<Array<string|number>>(ids)
 		const completedTaskIds = ref<Array<string|number>>(idsComp)
 		const todayTaskIds = ref<Array<string|number>>(tasks.state.today.value.map(task => task.id))
-		const openNewTask = ref<boolean>(false)
+		
 		const vue = getCurrentInstance();
 
 		const populateGrid = () => {
@@ -63,19 +61,7 @@ export default defineComponent({
 				populateGrid()
 			})
 			
-			core.emitters.tasks.NEW.on(payload => {
-				openNewTask.value = true;
-				tasks.state.pending.set(payload);
-				
-				// const id = tasks.length-1 !== -1 ? tasks.length-1 : tasks.length
-				// const task = tasks[id]
-				// tasks.push({id: `${hash(task||{})}`, ...payload})
-				// if(tasks.length > 3) {
-				//     tasks.pop()
-				// }
-			})
 			core.emitters.tasks.CREATED.on(payload => {
-				openNewTask.value = true;
 				populateGrid()
 			})
 		})
@@ -105,7 +91,6 @@ export default defineComponent({
 		return {
 			tasks: taskIds,
 			deleteTask,
-			openNewTask,
 			completed: completedTaskIds,
 			changeSections,
 			todayTaskIds,
@@ -163,11 +148,6 @@ export default defineComponent({
 		width: 0px;
 		height: 0px;
 	}
-	.new-task-enter-active, .new-task-leave-active{
-		transition: all 0.2s var(--ease);
-	}
-	.new-task-enter, .new-task-leave-to{
-		height: 0px;
-	}
+	
 }
 </style>

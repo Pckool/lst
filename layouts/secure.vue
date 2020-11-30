@@ -2,6 +2,9 @@
 	<div id="app">
 		<div id="app_side" v-if="!loading">
 			<add-task-btn/>
+			<transition name="new-task-con" :css="true" mode="out-in">
+				<new-task v-if="openNewTask" @close="openNewTask=false" class=""  key="new-task-panel"/>
+			</transition>
 		</div>
 		<div id="app_core" v-if="!loading">
 			
@@ -41,8 +44,8 @@ import Navigation from '~/components/app/navigation.vue'
 import Search from '~/components/app/search.vue'
 import AddTaskBtn from '~/components/app/addTaskBtn.vue'
 import ProfileImg from '~/components/app/profileImg.vue'
-import { tasks, user } from '~/core'
-import { emitters } from '~/core/emitters'
+import newTask from '~/components/app/newTask.vue'
+import { tasks, user, emitters } from '~/core'
 import anime from 'animejs' 
 const linkArr = [
 	{id: 0, route: '/app/', text: 'Dashboard'},
@@ -50,7 +53,7 @@ const linkArr = [
 ]
 export default defineComponent({
 	components: {Alert, Navigation, NiceLink, Search,
-	ProfileImg},
+	ProfileImg, newTask},
 	setup(props, ctx){
 		const verified = ref<boolean>(false)
 		const links = reactive(linkArr)
@@ -66,6 +69,25 @@ export default defineComponent({
 				vue.$router.push('/unverified')
 			}
 		})
+
+		const openNewTask = ref<boolean>(false)
+        onMounted(() => {
+            emitters.tasks.NEW.on(payload => {
+                console.log('new event being created!')
+				openNewTask.value = true;
+				tasks.state.pending.set(payload);
+				
+				// const id = tasks.length-1 !== -1 ? tasks.length-1 : tasks.length
+				// const task = tasks[id]
+				// tasks.push({id: `${hash(task||{})}`, ...payload})
+				// if(tasks.length > 3) {
+				//     tasks.pop()
+				// }
+			})
+			emitters.tasks.CREATED.on(payload => {
+				openNewTask.value = true;
+			})
+        })
 
 		const taskNumber = ref<number>();
 		const getTasksAmo = () =>  tasks.collection.getGroup('default').value.length;
@@ -97,7 +119,8 @@ export default defineComponent({
 			links,
 			currentTag,
 			taskNumber,
-			loading
+			loading,
+			openNewTask
 		}
 	}
 })
@@ -118,6 +141,7 @@ export default defineComponent({
 		flex-flow: column;
 		border-right: 1px solid var(--darkGrey);
 		padding: 8em 2em;
+		position: relative;
 		
 	}
 	#app_core{
@@ -195,13 +219,15 @@ export default defineComponent({
 		height: 0px;
 	}
 
-	.page-enter-active, .page-leave-active{
-		transition: all 0.4s var(--ease);
-	}
-	.page-enter, .page-leave-to{
-		opacity: 0;
-		transform: translateY(30%);
-	}
+	
 				
+}
+.new-task-con-enter-active, .new-task-con-leave-active{
+	transition: all 0.6s var(--ease);
+}
+.new-task-con-enter, .new-task-con-leave-to{
+	// width: 0%;
+	opacity: 0;
+	// transform: scaleX(0);
 }
 </style>

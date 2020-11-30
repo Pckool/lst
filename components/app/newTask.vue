@@ -47,6 +47,7 @@ export default defineComponent({
 		const ts = new Date(task.ts)
 		const time = ref<string>(`${ts.getHours()}`.padStart(2, '0') + ':' + `${ts.getMinutes()}`.padStart(2, '0'))
 		const date = ref<string>(`${ts.getFullYear()}`+'-'+`${ts.getMonth()+1}`.padStart(2, '0')+'-'+`${ts.getDate()}`.padStart(2, '0'))
+
 		const submit = () => {
 			const newTs = new Date(ts);
 			const splitTime = time.value.split(':').map(v => Number(v))
@@ -76,15 +77,20 @@ export default defineComponent({
 </script>
 <style lang="scss">
 #new-task_cont{
+	transition: all 0.2s var(--ease);
 	position: absolute;
-	bottom: 0;
-	left: 0;
-	width: 100%;
+	z-index: 300;
+	top: 0;
+	left: 100%;
+	width: fit-content;
 	height: 100%;
-	background: var(--darkBlueGrey);
-	border-radius: 25px 25px 0 0;
+	background: var(--dark);
+	// border-radius: 25px 25px 0 0;
 	display: flex;
-    flex-flow: column;
+	flex-flow: column;
+	transform: scaleX(1);
+	overflow: hidden;
+	opacity: 1;
 	
 	.header{
 		display: flex;
