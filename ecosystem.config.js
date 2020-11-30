@@ -11,10 +11,10 @@ module.exports = {
       host: 'philippec.me',
       ref: 'origin/master',
       repo: 'git@github.com:Pckool/lst.git',
-      path: '/var/web',
+      path: '/var/web/lst',
       'pre-deploy-local': '',
       'post-deploy': 'yarn install && yarn build && pm2 startOrRestart ecosystem.config.js --env production',
-      'pre-setup': 'mkdir lst && cd lst/'
+      'pre-setup': 'mkdir /var/web/lst'
     }
   }
 };
