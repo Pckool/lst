@@ -85,7 +85,6 @@ export default Vue.extend({
             
         },
         checkIfEmpty(){
-            console.log(this.input)
             if(this.value === '' || this.value === null) {
                 (<HTMLElement>this.$el.querySelector('.dyn-input_placeholder')).classList.remove('focused');
             }

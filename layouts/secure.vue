@@ -2,6 +2,7 @@
 	<div id="app">
 		<div id="app_side" v-if="!loading">
 			<add-task-btn/>
+			<svg-icon src="/images/logout.svg" @click="logout" class="logout-btn"/>
 			<transition name="new-task-con" :css="true" mode="out-in">
 				<new-task v-if="openNewTask" @close="openNewTask=false" class=""  key="new-task-panel"/>
 			</transition>
@@ -76,13 +77,6 @@ export default defineComponent({
                 console.log('new event being created!')
 				openNewTask.value = true;
 				tasks.state.pending.set(payload);
-				
-				// const id = tasks.length-1 !== -1 ? tasks.length-1 : tasks.length
-				// const task = tasks[id]
-				// tasks.push({id: `${hash(task||{})}`, ...payload})
-				// if(tasks.length > 3) {
-				//     tasks.pop()
-				// }
 			})
 			emitters.tasks.CREATED.on(payload => {
 				openNewTask.value = true;
@@ -113,6 +107,18 @@ export default defineComponent({
 				taskNumber.value = getTasksAmo();
 			})
 		})
+
+		const logout = async () => {
+			try{
+				vue.$nuxt.$loading.start()
+				await user.logout()
+				vue.$nuxt.$loading.finish()
+				vue.$router.push('/')
+			} catch(err){
+				console.error(err)
+			}
+			
+		}
 		
 		return {
 			verified,
@@ -120,7 +126,8 @@ export default defineComponent({
 			currentTag,
 			taskNumber,
 			loading,
-			openNewTask
+			openNewTask,
+			logout
 		}
 	}
 })
@@ -140,8 +147,12 @@ export default defineComponent({
 		display: flex;
 		flex-flow: column;
 		border-right: 1px solid var(--darkGrey);
-		padding: 8em 2em;
+		padding: 8em 2em 2em 2em;
 		position: relative;
+		justify-content: space-between;
+		.logout-btn{
+			cursor: pointer;
+		}
 		
 	}
 	#app_core{

@@ -29,7 +29,7 @@ export default defineComponent({
 <style lang="scss">
 #app{
 	height: 100%;
-	background: var(--loxBeige);
+	background: var(--black);
 	min-height: 100vh;
 	margin: auto;
 	position: relative;
@@ -67,18 +67,16 @@ export default defineComponent({
 				position: absolute;
 				bottom: 0;
 				left: 0;
-				background: var(--loxBlack);
+				background: var(--black);
 			}
 		}
 		
-	}		
-	.branding{
-		font-family: 'Roboto';
-		.logo{
-			height: 17px;
-			width: auto;
-		}
-	}
+	}	
+	.main-cont{
+		height: 100%;
+		padding-top: 5em;
+		flex-grow: 1;
+	}	
 				
 }
 </style>

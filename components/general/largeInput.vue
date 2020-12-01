@@ -22,7 +22,7 @@ export default defineComponent({
                 sel, range;
             if (window.getSelection) {
                 sel = window.getSelection();
-                console.log(sel)
+                // console.log(sel)
                 if (sel.rangeCount) {
                     range = sel.getRangeAt(0);
                     if (range.commonAncestorContainer.parentNode == editableDiv) {

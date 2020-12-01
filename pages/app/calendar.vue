@@ -105,7 +105,7 @@ export default defineComponent({
 				ts: new Date(isoDate).getTime()
 			}
 			emitters.tasks.NEW.emit(pending)
-			console.log(pending)
+			// console.log(pending)
 		}
 		return {
 			month,
