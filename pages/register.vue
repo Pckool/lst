@@ -104,7 +104,7 @@ export default Vue.extend({
 						easing: 'easeInOutQuad',
 						duration: 1000,
 						complete: () => {
-							user.login(this.username, this.password).then((res) => {
+							user.login(this.username, this.pass).then((res) => {
 								this.$router.push('/app')
 							})
 						}
