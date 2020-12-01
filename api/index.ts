@@ -13,24 +13,25 @@ const whitelist = [
 	
 ];
 const corsOptions = {
-	origin(origin: any, callback: any) {
-		Log.info("Origin: "+origin);
-		if (whitelist.indexOf(origin) !== -1 || !origin) {
-			ORIGIN = origin;
-			Log.info("Request accepted...");
-			callback(undefined, true)
-		} else {
-			Log.info("Request rejected...");
-			callback(new Error('Not allowed by CORS.'))
-		}
-	},
+	// origin(origin: any, callback: any) {
+	// 	Log.info("Origin: "+origin);
+	// 	if (whitelist.indexOf(origin) !== -1 || !origin) {
+	// 		ORIGIN = origin;
+	// 		Log.info("Request accepted...");
+	// 		callback(undefined, true)
+	// 	} else {
+	// 		Log.info("Request rejected...");
+	// 		callback(new Error('Not allowed by CORS.'))
+	// 	}
+	// },
+	origin: 'http://lst.philippec.me',
 	credentials: true
 }
 
 
     
 app.set('trust proxy', 1) // trust first proxy
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(cookieParser());
 // app.use(express.bodyParser({limit: '50mb'}));
 app.use(express.json({

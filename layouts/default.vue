@@ -74,7 +74,7 @@ export default defineComponent({
 	}	
 	.main-cont{
 		height: 100%;
-		padding-top: 5em;
+		padding-top: 3em;
 		flex-grow: 1;
 	}	
 				
