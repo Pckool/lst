@@ -28,7 +28,8 @@ const actions = {
 }
 
 const computed = {
-    authURL: App.Computed<string>(()=> state.dev.value?'https://auth2.loxly.co':'https://auth.loxly.co')
+    authURL: App.Computed<string>(()=> state.dev.value?'https://auth2.loxly.co':'https://auth.loxly.co'),
+    host: App.Computed<string>(()=> state.dev.value?'http://localhost:3030':'http://lst.philippec.me')
 }
 
 const controller = App.Controller({

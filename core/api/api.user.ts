@@ -3,7 +3,7 @@ import { User } from '../interfaces';
 import root from './../pulse';
 
 const api = App.API({
-    baseURL: 'http://localhost:3030',
+    baseURL: root.state.host.value || 'http://localhost:3030',
     timeout: 20000,
     options: {
         credentials: 'include'
