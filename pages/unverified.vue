@@ -49,7 +49,8 @@ export default defineComponent({
         return {
             code,
             submit,
-            disabled
+            disabled,
+            resendVerif
         }
     }
 })
