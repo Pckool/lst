@@ -3,7 +3,7 @@
         <div class="in-area">
             <small>check your email</small>
             <h6>Enter verification code here:</h6>
-            <dynamic-input type="text" v-model="code" placeholder=""/>
+            <dynamic-input type="text" v-model="code" placeholder="" @keypress.enter="submit(code)"/>
             <!-- <input type="text" v-model="code"> -->
             <button @click="submit(code)" :disabled="disabled">verify</button>
             <small class="reverify" @click="resendVerif">send again</small>
@@ -23,13 +23,19 @@ export default defineComponent({
         const code = ref('');
         const disabled = ref(true);
         const submit = (inp: string) => {
-            const codeAttempt = Number(inp)
-            if(!isNaN(codeAttempt)){
-                user.verify(user.state.email.value, codeAttempt).then((res) => {
-                    user.setProp('verified', true)
-                })
+            if(code.value.length === 6){
+                const codeAttempt = Number(inp)
+                if(!isNaN(codeAttempt)){
+                    user.verify(user.state.email.value, codeAttempt).then((res) => {
+                        user.setProp('verified', true)
+                    })
+                }
+                code.value = '';
             }
-            code.value = '';
+            else{
+                console.log('The code is supposed to be 6 digets!')
+            }
+            
         }
         watch(code, () => {
             code.value = code.value.replace(/([A-z])+/g, '')

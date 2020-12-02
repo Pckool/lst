@@ -40,7 +40,7 @@ export default {
             sendEmail(user.email, `
             <h3>Welcome to LST!</h3>
             <h5>Here is your 6-digit verification code:</h5>
-            <h2>${verifKey}</h2>
+            <h2>${`${verifKey}`.padStart(6, '0')}</h2>
             `, {subject: 'Account Verification from LST'})
             
             return pendingUser;

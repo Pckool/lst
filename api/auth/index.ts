@@ -161,7 +161,7 @@ function authInit(app: Express){
 			if(veriStat) {
 				user.verified = true;
 				UDB.update(user._id, {verified: user.verified})
-				return res.status(200)
+				return res.sendStatus(200)
 			}
 			throw new Error('Incorrect code!')
 			
