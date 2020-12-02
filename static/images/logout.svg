@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="34.488" height="26" viewBox="0 0 34.488 26">
+<svg xmlns="http://www.w3.org/2000/svg" width="29.434" height="18" viewBox="0 0 29.434 18">
   <defs>
     <style>
       .cls-1 {
@@ -8,11 +8,11 @@
       }
     </style>
   </defs>
-  <g id="logout" transform="translate(1.488 1)">
-    <path id="Path_4" data-name="Path 4" class="cls-1" d="M4003.945,2108H4016v24h-12.055" transform="translate(-3984 -2108)"/>
-    <g id="Group_8" data-name="Group 8" transform="translate(66.558 -1846.039) rotate(90)">
-      <path id="Path_2" data-name="Path 2" class="cls-1" d="M5804,1188l7.611,8.388,7.611-8.388" transform="translate(-3953.96 -1129.831)"/>
-      <path id="Path_3" data-name="Path 3" class="cls-1" d="M5808,1196v-24" transform="translate(-3950.35 -1129.442)"/>
+  <g id="logout" transform="translate(1.434 1)">
+    <path id="Path_4" data-name="Path 4" class="cls-1" d="M4003.945,2108H4016v16h-12.055" transform="translate(-3989 -2108)"/>
+    <g id="Group_8" data-name="Group 8" transform="translate(66.558 -1849.039) rotate(90)">
+      <path id="Path_2" data-name="Path 2" class="cls-1" d="M5804,1188l7.111,7.313,7.111-7.313" transform="translate(-3953.961 -1128.755)"/>
+      <path id="Path_3" data-name="Path 3" class="cls-1" d="M5808,1191.858V1172" transform="translate(-3950.85 -1125.3)"/>
     </g>
   </g>
 </svg>

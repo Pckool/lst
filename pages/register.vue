@@ -1,12 +1,9 @@
 <template>
-	
 	<div class="main-cont">
 		<div class="background">
 
 		</div>
 		<div class="left">
-			<!-- <img src="/images/lox_wordartcolored-words_1x.png" height="70" alt="Loxly"/> -->
-			<!-- <logo style="height: 60px;width: auto;"/> -->
 			<div class="catcher_cont">
 				<div class="catcher">
 					<h1>
@@ -14,39 +11,26 @@
 					</h1>
 					<h6><div>Welcome to a minimalist's organization dream.</div></h6>
 				</div>
-				
-				
-				
 			</div>
 		</div>
 		<div class="right login">
-
-				<dynamic-input v-model="name" placeholder="your name" type="text">
-					<small class="error">{{name_error}}</small>
-				</dynamic-input>
-				
-				<dynamic-input v-model="username" placeholder="email" type="email" @blur="checkEmail">
-					<small class="error">{{email_error}}</small>
-				</dynamic-input>
-				<dynamic-input v-model="number" placeholder="phone" type="tel"/>
-					
-
-				<dynamic-input v-model="pass" placeholder="password" type="password"/>
-					
-
-				
-				<dynamic-input v-model="passconfirm" placeholder="password (again)" type="password" @keyup.enter="register" @blur="checkPass">
-					<small class="error">{{pass_error}}</small>
-				</dynamic-input>
-				<div class="login_submit">
-					<button id="submit" @click="register" >
-						<i v-show="loading" class="loading-icon fas fa-circle-notch"></i>
-						<span v-show="!loading">Signup</span>
-					</button>
-					
-				</div>
-			
-			
+			<dynamic-input v-model="name" placeholder="your name" type="text">
+				<small class="error">{{name_error}}</small>
+			</dynamic-input>
+			<dynamic-input v-model="username" placeholder="email" type="email" @blur="checkEmail">
+				<small class="error">{{email_error}}</small>
+			</dynamic-input>
+			<dynamic-input v-model="number" placeholder="phone" type="tel"/>
+			<dynamic-input v-model="pass" placeholder="password" type="password"/>
+			<dynamic-input v-model="passconfirm" placeholder="password (again)" type="password" @keyup.enter="register" @blur="checkPass">
+				<small class="error">{{pass_error}}</small>
+			</dynamic-input>
+			<div class="login_submit">
+				<button id="submit" @click="register" >
+					<i v-show="loading" class="loading-icon fas fa-circle-notch"></i>
+					<span v-show="!loading">Signup</span>
+				</button>
+			</div>
 		</div>
 	</div>
 </template>
@@ -84,7 +68,6 @@ export default Vue.extend({
 				anime({
 					'targets': '.loading-icon',
 					'rotate': '360deg',
-					
 					'duration': 700,
 					'loop': true,
 					'easing': 'easeInOutQuad'
