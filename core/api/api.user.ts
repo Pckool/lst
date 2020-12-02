@@ -27,5 +27,6 @@ export const fetchers = {
     logout: async (): Promise<PulseResponse> => (await api.post('user/logout')),
     auth: async (): Promise<PulseResponse> => (await api.post('user/auth')),
     update: async (data): Promise<PulseResponse> => (await api.post('user/update', data)),
+    resendVer: async (data): Promise<PulseResponse> => (await api.post('user/verify-redo', data)),
 }
 export default fetchers;

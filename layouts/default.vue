@@ -22,6 +22,7 @@
 import Alert from '~/components/general/Alert.vue'
 import NiceLink from '~/components/general/niceLink.vue'
 import {defineComponent} from '@vue/composition-api'
+
 export default defineComponent({
 	components: {Alert, NiceLink},
 })

@@ -27,6 +27,16 @@ export const actions = {
         }
     },
 
+    async resendverify(){
+        try{
+            return await userApi.resendVer({email: state.email.value});
+        }
+        catch(err){
+            console.error(err)
+            throw err;
+        }
+    },
+
     async update(){
         try{
             let newUser: any = {}

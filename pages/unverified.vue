@@ -6,6 +6,7 @@
             <dynamic-input type="text" v-model="code" placeholder=""/>
             <!-- <input type="text" v-model="code"> -->
             <button @click="submit(code)" :disabled="disabled">verify</button>
+            <small class="reverify" @click="resendVerif">send again</small>
         </div>
         <span></span>
         
@@ -42,6 +43,9 @@ export default defineComponent({
                 disabled.value = true
             }
         })
+        const resendVerif = () =>  {
+            user.resendverify()
+        }
         return {
             code,
             submit,
@@ -70,6 +74,14 @@ export default defineComponent({
         align-items: center;
         justify-content: center;
         flex-grow: 1;
+    }
+    .reverify{
+        text-decoration: underline;
+        color: var(--darkGrey);
+        margin-top: 0.5em;
+        &:hover{
+            color: var(--white);
+        }
     }
     
 }

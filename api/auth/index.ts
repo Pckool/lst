@@ -88,23 +88,6 @@ function authInit(app: Express){
 			Log.error("Error when trying to create user "+JSON.stringify(user, null, 2))
 			res.status(500).json(err);
 		}
-
-		try{
-			let recipients = '';
-			// (await UDB.getAll()).forEach((el:any) => {
-			// 	if (el.level > 2) recipients = `${recipients}${el.email};`
-			// })
-			// if(!recipients || recipients === '') return;
-			// sendEmail(recipients, `<p>A new person has signed up for your Loxly instance!</p> 
-			// 	<p>Name: <b>${user.name}</b></p>
-			// 	<p>Email: <b>${user.email}</b></p>
-			// 	<p>If you recognize this person as an employee, please use the staff page on your Loxly instance to promote them to a higher clearance level!`, {
-			// 	subject: 'A new Account was Created! Please Verify.'
-			// })
-		} catch(err){
-			Log.error(err);
-			res.status(500).json(err);
-		}
 	});
 
 	router.post('/login', passport.authenticate('local'), async (req: any, res: any) => {
@@ -188,7 +171,19 @@ function authInit(app: Express){
 			})
 			
 		}catch(err){
+			res.status(400).send(err.message);
+		}
+	})
 
+	router.post('/verify-redo', async (req, res) => {
+		try{
+			let user = await UDB.findUser(req.body.username.toLowerCase());
+			await UDB.addVerif(user);
+
+			res.sendStatus(200);
+			
+		}catch(err){
+			res.status(400).send(err.message);
 		}
 	})
 

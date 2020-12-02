@@ -8,13 +8,8 @@ export default {
     async add(newUser: User) {
         try{
             const res = await DB.add('users', newUser);
-            const verifKey = Math.trunc(Math.random()*Math.pow(10, 6))
-            // TODO: Change from 'any' to generic type
-            const pendingres = await DB.add('pendingusers', {
-                email: newUser.email,
-                id: newUser.id,
-                ver_key: verifKey
-            });
+            await this.addVerif(newUser);
+            
             sendEmail(newUser.email, `
             <h3>Welcome to LST!</h3>
             <h5>Here is your 6-digit verification code:</h5>
@@ -27,6 +22,27 @@ export default {
         
     },
 
+    async addVerif(user: User): Promise<{email: string, id: string, ver_key: number}> {
+        try{
+            const res: PendingUser = await this.findPendingUser(user.email);
+            if(res){
+                await this.removePendingUser(user.email)
+            }
+
+            const verifKey = Math.trunc(Math.random()*Math.pow(10, 6))
+            const pendingUser = {
+                email: user.email,
+                id: user.id,
+                ver_key: verifKey
+            }
+            const pendingres = await DB.add('pendingusers', pendingUser);
+            return pendingUser;
+        } catch(err){
+            throw err
+        }
+        
+    },
+
     async remove(username: string) {
         try{
             const res = await DB.delete('users', username);
@@ -35,7 +51,14 @@ export default {
         }
         
     },
-    
+    async removePendingUser(username: string) {
+        try{
+            const res = await DB.delete('pendingusers', username);
+        } catch(err){
+            throw err;
+        }
+        
+    },
     async update(_id: string, data: any) {
         try{
             console.log(`searching for %s in db...`, _id)
@@ -88,7 +111,7 @@ export default {
         try{
             un = un.toLowerCase();
             let users = await this.getAll();
-            let user: User = <User>users.find(user => user.email === un);
+            let user: User = <User>users.find(user => user.email.toLowerCase() === un);
             if(user){
                 console.log(`found user ${JSON.stringify(user, null, 2)}`);
             } 
