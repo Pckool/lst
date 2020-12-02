@@ -1,17 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="17" height="13.942" viewBox="0 0 17 13.942">
-  <defs>
-    <style>
-      .cls-1 {
-        fill: none;
-        stroke: #e2e2e2;
-      }
-    </style>
-  </defs>
-  <g id="Download" transform="translate(0.5)">
-    <path id="Path_1" data-name="Path 1" class="cls-1" d="M5803,1188.013v8h16v-8" transform="translate(-5803 -1182.571)"/>
-    <g id="Group_7" data-name="Group 7" transform="translate(-1845 -42.558)">
-      <path id="Path_2" data-name="Path 2" class="cls-1" d="M5804,1188l2.961,2.961,2.961-2.961" transform="translate(-3953.961 -1139.519)"/>
-      <path id="Path_3" data-name="Path 3" class="cls-1" d="M5808,1180.884V1172" transform="translate(-3955 -1129.442)"/>
-    </g>
-  </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="17" height="13.942" viewBox="0 0 17 13.942"><g transform="translate(0.5)"><path d="M5803,1188.013v8h16v-8" transform="translate(-5803 -1182.571)" fill="none" stroke="#e2e2e2" stroke-width="1"/><g transform="translate(-1845 -42.558)"><path d="M5804,1188l2.961,2.961,2.961-2.961" transform="translate(-3953.961 -1139.519)" fill="none" stroke="#e2e2e2" stroke-width="1"/><path d="M5808,1180.884V1172" transform="translate(-3955 -1129.442)" fill="none" stroke="#e2e2e2" stroke-width="1"/></g></g></svg>

@@ -4,7 +4,7 @@
 			<div class="overlay">
 				
 			</div>
-			<img src="/images/download.svg" alt="" class="ico">
+			<svg-icon src="/images/Download.svg" alt="" class="ico"/>
 			<input ref="input" id="file-input_profile-icon" type="file" name="name" style="display: none;" @change="imgChange"/>
 			<img :src="imgData" alt="" class="img">
 			

@@ -1,4 +1,1 @@
-<svg id="More" xmlns="http://www.w3.org/2000/svg" width="4" height="11" viewBox="0 0 4 11">
-  <circle id="Ellipse_1" data-name="Ellipse 1" cx="2" cy="2" r="2" fill="#fff"/>
-  <circle id="Ellipse_2" data-name="Ellipse 2" cx="2" cy="2" r="2" transform="translate(0 7)" fill="#fff"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="4" height="11" viewBox="0 0 4 11"><circle cx="2" cy="2" r="2" fill="#fff"/><circle cx="2" cy="2" r="2" transform="translate(0 7)" fill="#fff"/></svg>
