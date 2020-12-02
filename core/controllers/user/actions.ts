@@ -52,9 +52,9 @@ export const actions = {
         }
     },
     
-    async verify(username:string, code: number): Promise<any> {
+    async verify(email:string, code: number): Promise<any> {
         try{
-            let res = await userApi.verify({username, code})
+            let res = await userApi.verify({email, code})
             return res.data;
         } catch (err: any){
             console.error(err);

@@ -80,6 +80,7 @@ export default defineComponent({
         text-decoration: underline;
         color: var(--darkGrey);
         margin-top: 0.5em;
+        cursor: pointer;
         &:hover{
             color: var(--white);
         }

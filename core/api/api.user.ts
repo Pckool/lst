@@ -3,7 +3,7 @@ import { User } from '../interfaces';
 import root from './../pulse';
 
 const api = App.API({
-    baseURL: root.state.host.value || 'http://localhost:3030',
+    baseURL: root.state.host.value,
     timeout: 20000,
     options: {
         credentials: 'include'
@@ -17,7 +17,7 @@ interface PulseResponse<DataType = any> {
     type?: string;
 }
 interface UserVerification {
-    username: string;
+    email: string;
     code: number;
 }
 export const fetchers = {

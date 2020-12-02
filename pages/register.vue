@@ -90,7 +90,7 @@ export default Vue.extend({
 					'easing': 'easeInOutQuad'
 				});
 				user.register({
-					username: this.username,
+					email: this.username,
 					pass: this.pass,
 					name: this.name,
 					namespaces: [],

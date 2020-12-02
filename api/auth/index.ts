@@ -49,7 +49,7 @@ function authInit(app: Express){
 		let user: User|null = null
 		try{
 			Log.info('checking if the user exists...');
-			let email = req.body.username.toLowerCase();
+			let email = req.body.email.toLowerCase();
 
 			try{
 				let existingUser = await UDB.findUser(email)
@@ -155,20 +155,16 @@ function authInit(app: Express){
 
 	router.post('/verify', async (req, res) => {
 		try{
-			let user = await UDB.findUser(req.body.username.toLowerCase());
-			const veriStat = await UDB.verify(req.body.username.toLowerCase(), req.body.code);
+			const user = await UDB.findUser(req.body.email.toLowerCase());
+			const veriStat = await UDB.verify(req.body.email.toLowerCase(), req.body.code);
 
 			if(veriStat) {
 				user.verified = true;
 				UDB.update(user._id, {verified: user.verified})
+				return res.status(200)
 			}
-
-			res.status(veriStat ? 200 : 400).json({
-				name: user.name,
-				email: user.email,
-				id: user.id,
-				verified: user.verified,
-			})
+			throw new Error('Incorrect code!')
+			
 			
 		}catch(err){
 			res.status(400).send(err.message);
@@ -177,7 +173,7 @@ function authInit(app: Express){
 
 	router.post('/verify-redo', async (req, res) => {
 		try{
-			let user = await UDB.findUser(req.body.username.toLowerCase());
+			let user = await UDB.findUser(req.body.email.toLowerCase());
 			await UDB.addVerif(user);
 
 			res.sendStatus(200);

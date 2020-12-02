@@ -3,7 +3,7 @@ import root from '../pulse'
 import { Task } from '../interfaces/tasks';
 
 const api = App.API({
-    baseURL: root.state.host.value || 'http://localhost:3030',
+    baseURL: root.state.host.value,
     options: {
 
     }

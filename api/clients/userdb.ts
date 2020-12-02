@@ -9,33 +9,40 @@ export default {
         try{
             const res = await DB.add('users', newUser);
             await this.addVerif(newUser);
-            
-            sendEmail(newUser.email, `
-            <h3>Welcome to LST!</h3>
-            <h5>Here is your 6-digit verification code:</h5>
-            <h2>${verifKey}</h2>
-            `, {subject: 'Account Verification from LST'})
             console.log("User Generated: %o", res);
+            
         } catch(err){
             throw err;
         }
         
     },
 
-    async addVerif(user: User): Promise<{email: string, id: string, ver_key: number}> {
+    async addVerif(user: User): Promise<{email: string, id: string, ver_key: string}> {
         try{
-            const res: PendingUser = await this.findPendingUser(user.email);
-            if(res){
-                await this.removePendingUser(user.email)
+            try{
+                const res: PendingUser = await this.findPendingUser(user.email);
+                if(res){
+                    await DB.delete('pendingusers', res._id)
+                }
             }
+            catch(err){
+                console.log('...')
+            }
+            
 
             const verifKey = Math.trunc(Math.random()*Math.pow(10, 6))
             const pendingUser = {
                 email: user.email,
                 id: user.id,
-                ver_key: verifKey
+                ver_key: `${verifKey}`.padStart(6, '0')
             }
             const pendingres = await DB.add('pendingusers', pendingUser);
+            sendEmail(user.email, `
+            <h3>Welcome to LST!</h3>
+            <h5>Here is your 6-digit verification code:</h5>
+            <h2>${verifKey}</h2>
+            `, {subject: 'Account Verification from LST'})
+            
             return pendingUser;
         } catch(err){
             throw err
@@ -51,26 +58,19 @@ export default {
         }
         
     },
-    async removePendingUser(username: string) {
-        try{
-            const res = await DB.delete('pendingusers', username);
-        } catch(err){
-            throw err;
-        }
-        
-    },
     async update(_id: string, data: any) {
         try{
             console.log(`searching for %s in db...`, _id)
-            const user =(await DB.useIndexGetDocs<User>('find_by_id', _id))[0];
-            const res = await DB.update('users', user._id, data);
+            // const user = (await DB.useIndexGetDocs<User>('find_by_id', _id))[0];
+            const res = await DB.update('users', _id, data);
+            return res
         } catch(err){
             throw err;
         }
         
     },
 
-    async verify(email: string, codeAttempt: number|string): Promise<boolean> {
+    async verify(email: string, codeAttempt: string): Promise<boolean> {
         try{
             let status = false;
             const res: PendingUser = await this.findPendingUser(email);
@@ -118,7 +118,6 @@ export default {
             else{ 
                 console.log(`Found no user matching that name`);
                 throw new Error('User not found!');
-                
             } 
             if(callback) 
                 callback(undefined, user)

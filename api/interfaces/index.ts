@@ -25,7 +25,7 @@ export interface PendingUser {
     _id: resID;
     id: string;
     email: string;
-    ver_key: string|number;
+    ver_key: string;
 }
 export interface UserNamespace {
     id: namespaceID;

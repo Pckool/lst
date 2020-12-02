@@ -9,6 +9,7 @@ const state = {
         if(!value) emitters.navigation.SIDE_NAV.emit({status: 'open'})
     }),
     dev: App.State(!(process.env.NODE_ENV==="production")).type(Boolean),
+    host: App.State(!(process.env.NODE_ENV==="production")?'http://localhost:3030':'http://lst.philippec.me').type(String)
 }
 
 const actions = {
@@ -28,7 +29,7 @@ const actions = {
 }
 
 const computed = {
-    host: App.Computed<string>(()=> state.dev.value?'http://lst.philippec.me':'http://localhost:3030')
+    
 }
 
 const controller = App.Controller({
