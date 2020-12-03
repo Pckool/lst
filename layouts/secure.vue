@@ -328,7 +328,7 @@ $bp6: 520px;
 	}
 	.logout-btn_mobile{
 		margin: 24px;
-		position: absolute;
+		position: fixed;
 		cursor: pointer;
 		bottom: 0;
 		left: 0;
