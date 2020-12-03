@@ -29,9 +29,8 @@
 			
 			
 			<nuxt/>
-			
+			<add-task-btn-mobile/>
 		</div>
-		<div id="blur-app" v-if="blur"></div>
 		<alert/>
 		
 	</div>
@@ -45,6 +44,7 @@ import NiceLink from '~/components/general/niceLink.vue'
 import Navigation from '~/components/app/navigation.vue'
 import Search from '~/components/app/search.vue'
 import AddTaskBtn from '~/components/app/addTaskBtn.vue'
+import AddTaskBtnMobile from '~/components/app/addTaskBtnMobile.vue'
 import ProfileImg from '~/components/app/profileImg.vue'
 import newTask from '~/components/app/newTask.vue'
 import { tasks, user, emitters } from '~/core'
@@ -55,7 +55,7 @@ const linkArr = [
 ]
 export default defineComponent({
 	components: {Alert, Navigation, NiceLink, Search,
-	ProfileImg, newTask},
+	ProfileImg, newTask, AddTaskBtnMobile},
 	setup(props, ctx){
 		const verified = ref<boolean>(false)
 		const links = reactive(linkArr)
@@ -82,6 +82,7 @@ export default defineComponent({
 				openNewTask.value = true;
 			})
 			emitters.tasks.CREATED.on(payload => {
+				
 				openNewTask.value = false;
 				taskNumber.value = getTasksAmo();
 			})
@@ -107,7 +108,6 @@ export default defineComponent({
 			})
 
 			emitters.general.BLUR.on(val => {
-				console.log('blur is ', val)
 				blur.value = val;
 			})
 		})
@@ -158,13 +158,16 @@ export default defineComponent({
 		.logout-btn{
 			cursor: pointer;
 		}
-		
+		@media screen and (max-width: 816px) {
+			display: none;
+		}
 	}
 	#app_core{
 		transition: all 0.4s var(--ease);
 		display: flex;
 		flex-flow: column;
 		flex-grow: 1;
+		
 
 	}
 	.top_cont{
@@ -178,6 +181,7 @@ export default defineComponent({
 		align-items: center;
 		z-index: 200;
 		pointer-events: none;
+		
 		.right_cont{
 			display: flex;
 			flex-flow: row nowrap;
@@ -194,10 +198,11 @@ export default defineComponent({
 		}
 		.title_cont{
 			pointer-events: all;
-			padding: 3em 5em;
+			padding: 3em 5em 3em 3em;
 			display: flex;
 			align-items: center;
 			justify-content: center;
+			
 			.title{
 
 			}
@@ -214,6 +219,10 @@ export default defineComponent({
 			align-items: center;
 			justify-content: flex-start;
 			flex-grow: 1;
+
+			@media screen and (max-width: 1200px) {
+				display: none;
+			}
 		}
 		
 		
@@ -225,7 +234,17 @@ export default defineComponent({
 				}
 			}
 		}
-		
+		@media screen and (max-width: 1200px) {
+			justify-content: space-between;
+		}
+		@media screen and (max-width: 711px) {
+			.title_cont{
+				display: none;
+			}
+			.right_cont{
+				padding-left: 1em;
+			}
+		}
 		
 	}		
 	.nav-enter-active, .nav-leave-active{
@@ -246,6 +265,7 @@ export default defineComponent({
 	}
 	[blur="true"]{
 		filter: blur(3px);
+		pointer-events: none;
 	}
 
 	

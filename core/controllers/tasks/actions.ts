@@ -78,10 +78,8 @@ export const actions = {
 			_date.setHours(0, 0, 0)
 			const tasks = Object.values(collection.data).map(data => data.value)
 			const result = tasks?.filter(task => {
-				console.log(new Date(task.ts), "vs", _date)
 				return dayjs(new Date(task.ts)).isSame(_date, 'month')
 			});
-			console.log(result)
 			return result
 		} catch(err){
 

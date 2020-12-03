@@ -24,7 +24,7 @@ export default defineComponent({
 		}
 	},
 	setup(props, ctx){
-		const now = new Date()
+		const now = new Date(props.value||null)
 		const month = ref<string>(`${now.getMonth()+1}`.padStart(2, '0'))
 		const date = ref<string>(`${now.getDate()}`.padStart(2, '0'))
 		const year = ref<string>(`${now.getFullYear()}`.padStart(4, '0'))
@@ -195,7 +195,7 @@ export default defineComponent({
 			console.log(dateValue)
 			if(dateValue){
 				backup.value = value
-				ctx.emit('change', dateValue.toUTCString())
+				ctx.emit('change', value)
 				ctx.emit('date', dateValue)
 			}
 			// TODO: check to seee if the generated date differs from the component values (essentially, check to see if the date is valid)

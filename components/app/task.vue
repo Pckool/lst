@@ -1,5 +1,5 @@
 <template>
-	<div :class="'task '+task.tag.color" :id="task.id" :status="task.status" :waiting="waiting">
+	<div :class="'task '+task.tag.color" :id="task.id" :status="task.status" :waiting="waiting"  @mouseleave="openMore=false">
 		<div class="bar">
 			<div class="bar_check_text" :blur="openMore">
 				<checkbox v-model="checked"/>
@@ -14,10 +14,10 @@
 				</div>
 			</div>
 			
-			<span class="more" ref="moreEl">
-				<svg-icon src="/images/more.svg" @click="openMore=!openMore" :opened="openMore"/>
-				<div class="more-drop" v-if="openMore">
-					<small @click="deleteTask(task)"><i class="fas fa-trash fa-sm"></i></small>
+			<span class="more" :expand="openMore" :opened="openMore">
+				<svg-icon src="/images/more.svg" @click="openMore=!openMore" class="more-ico"/>
+				<div class="more-drop" ref="moreEl">
+					<small class="more-item" @click="deleteTask(task)"><i class="fas fa-trash fa-sm"></i></small>
 				</div>
 			</span>
 			
@@ -27,9 +27,10 @@
 	</div>
 </template>
 <script lang="ts">
-import {computed, defineComponent, onBeforeMount, onMounted, ref, watch} from '@vue/composition-api'
+import {computed, defineComponent, getCurrentInstance, onBeforeMount, onMounted, ref, watch} from '@vue/composition-api'
 import checkbox from '~/components/general/checkbox.vue'
 import { emitters, Task, tasks } from '~/core';
+import anime from 'animejs'
 
 export default defineComponent({
   components: { checkbox },
@@ -47,6 +48,7 @@ export default defineComponent({
 		const waiting = ref<boolean>(false)
 		const openMore = ref<boolean>(false)
 		const moreEl = ref<HTMLElement>()
+		const vue = getCurrentInstance()
 
 		// const strikethrough = ref<string>('')
 		onBeforeMount(() => {
@@ -56,24 +58,20 @@ export default defineComponent({
 			}
 			
 		})
-		let eventListener;
 		watch(openMore, () => {
-			const elFnc = function(e) {
-				const target = (<HTMLElement>e.target)
-				// console.log(target !== moreEl.value, Array.from(moreEl.value.children).indexOf(target))
+			// const exposeAnim = anime({
+			// 	targets: vue.$el.querySelector('.more-drop'),
+			// 	height: [0, moreEl.value.offsetHeight],
+			// 	easing: 'easeInOutQuad',
+			// 	autoplay: false,
 
-				if(target !== moreEl.value && Array.from(moreEl.value.children).indexOf(target) === -1){
-					openMore.value = false
-				}
-			}
-			console.log(openMore.value)
-			if(openMore.value){
-				console.log('in first')
-				eventListener = document.addEventListener('click', elFnc)
-			}
-			else{
-				document.removeEventListener('click', elFnc)
-			}
+			// })
+			// if(openMore.value){
+			// 	exposeAnim.play();
+			// }else{
+			// 	exposeAnim.reverse();
+			// }
+			
 		})
 		
 		watch(checked, () => {
@@ -154,7 +152,8 @@ export default defineComponent({
 	color: var(--black);
 	font-weight: 600;
 	min-height: fit-content;
-    height: max-content;
+	height: max-content;
+	overflow: hidden;
 	.loading-bar{
 		position: absolute;
 		bottom: 0;
@@ -213,27 +212,40 @@ export default defineComponent({
 		align-items: center;
 		position: relative;
 		height: fit-content;
-		width: 17px;
-		&[opened="true"]{
-			background: var(--white);
-		}
-		svg{
-			circle, rect{
-				fill: var(--black) !important;
+		.more-ico{
+			width: 17px;
+			svg{
+				circle, rect{
+					fill: var(--black) !important;
+				}
+				
 			}
-			
 		}
+		
+		
 		.more-drop{
+			transition: all 0.2s var(--ease);
 			position: absolute;
 			top: 100%;
 			left: 50%;
 			transform: translateX(-50%);
 			background: var(--white);
-			padding: 12px;
+			
 			display: flex;
 			flex-flow: column nowrap;
 			border-radius: 7px;
+			overflow: hidden;
+			max-height: 0px;
 
+			// display: none;
+		}
+		.more-item{
+			padding: 12px;
+		}
+		&[opened="true"]{
+			.more-drop{
+				max-height: 100px;
+			}
 		}
 	}
 	&[status="complete"]{
@@ -250,6 +262,9 @@ export default defineComponent({
 		.loading-bar{
 			width: 100%;
 		}
+	}
+	@media screen and (max-width: 711px) {
+		width: auto;
 	}
 }
 </style>

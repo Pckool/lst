@@ -44,10 +44,10 @@ import anime from 'animejs'
 export default defineComponent({
 	components: {DynamicInput, SvgIcon, LargeInput, DateInput, TimeInput},
 	setup(props, ctx){
-		const task = ref<PendingTask>(tasks.state.pending.value)
-		
+		const task = ref<PendingTask>({...tasks.state.pending.value})
+		let animation;
 		const text = ref<string>('Pick up dog food')
-		const ts = new Date(task.value.ts)
+		const ts = new Date(task.value.ts||null)
 		const time = ref<string>(`${ts.getHours()}`.padStart(2, '0') + ':' + `${ts.getMinutes()}`.padStart(2, '0'))
 		const date = ref<string>(`${ts.getFullYear()}`+'-'+`${ts.getMonth()+1}`.padStart(2, '0')+'-'+`${ts.getDate()}`.padStart(2, '0'))
 		const genDateTime = (d: Date|number|string) => {
@@ -56,27 +56,37 @@ export default defineComponent({
 			date.value = `${ts.getFullYear()}`+'-'+`${ts.getMonth()+1}`.padStart(2, '0')+'-'+`${ts.getDate()}`.padStart(2, '0')
 		}
 		// when the user is ready to create the task
-		const submit = () => {
-			const newTs = new Date(ts);
+		const submit = async () => {
+			
 			const splitTime = time.value.split(':').map(v => Number(v))
 			const splitDate = date.value.split('-').map(v => Number(v))
-			
-			newTs.setHours(splitTime[0], splitTime[1])
-			newTs.setFullYear(splitDate[0], splitDate[1], splitDate[2])
+			const newTs = new Date(splitDate[0], splitDate[1]-1, splitDate[2], splitTime[0], splitTime[1], 0, 0);
+			// newTs.setHours()
+			// newTs.setFullYear()
+			console.log(newTs)
 			task.value.ts = newTs.getTime()
 			task.value.text = text.value
 			task.value.owner = user.state.id.value
 			task.value.status = 'inprogress'
-			tasks.add(task.value).then((genTask: Task) => {
-				core.emitters.tasks.CREATED.emit(genTask);
-				ctx.emit('close')
+			// try{
+			// 	const genTask: Task = await tasks.add(task.value)
+			// 	core.emitters.tasks.CREATED.emit(genTask);
+			// 	if(animation) animation.reverse()
+			// 	await animation.finished
+			// 	ctx.emit('close')
+			// }
+			// catch(err){
+			// 	console.warn(err)
+			// }
 				
-			});
+			
 		}
 		// for emitter update
 		onMounted(() => {
 			emitters.general.BLUR.emit(true);
+			// used if the user decides to change something about the new task (tag, time, etc) from an outside component
 			emitters.tasks.NEW.on(payload => {
+				console.log(payload)
 				if(payload.ts){
 					genDateTime(payload.ts)
 				}
@@ -87,23 +97,19 @@ export default defineComponent({
 					task.value = {...task.value, text: payload.text}
 				}
 			})
+			
+			
 		})
-		onBeforeUnmount(() => {
-			emitters.general.BLUR.emit(false);
-		})
+		
 
 		// for animation
 		const vue = getCurrentInstance();
+		
 		onMounted(() => {
-			vue.$nextTick(() => {
+			animation = vue.$nextTick(() => {
 				const el: HTMLElement = document.querySelector('#new-task_cont')
 				anime.timeline({
-					
 					easing: 'easeInOutQuad',
-					
-					complete(){
-						console.log('animating')
-					}
 				}).add({
 					targets: '#new-task_cont',
 					width: [0, el.offsetWidth],
@@ -121,12 +127,21 @@ export default defineComponent({
 			})
 			
 		})
+
+		// final cleanup
+		onBeforeUnmount(async () => {
+			emitters.general.BLUR.emit(false);
+			
+		})
+
+
 		return {
 			task,
 			text,
 			time,
 			date,
 			submit,
+			ts,
 		}
 	}
 })

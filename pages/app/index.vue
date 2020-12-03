@@ -114,7 +114,9 @@ export default defineComponent({
 		display: flex;
 		flex-flow: row wrap;
 		justify-content: space-around;
-		
+		@media screen and (max-width: 711px) {
+			padding: 6em 3em 3em 3em;
+		}
 		
 		.task-list{
 			flex-flow: column nowrap;
@@ -123,15 +125,23 @@ export default defineComponent({
     		overflow: auto;
 			padding: 0.5em;
 			min-width: 400px;
+			@media screen and (max-width: 711px) {
+				min-width: unset;
+			}
+			@media screen and (max-height: 1000px) {
+				max-height: 90%;
+			}
 		}
 		.tasks-inner{
 			margin: 0 1em;
+			
 			.small-header{
 				margin-top: 0.6em;
 				margin-bottom: 0.9em;
 				color: var(--darkGrey);
 				user-select: none;
 			}
+			
 		}
 		.no-data{
 			color: var(--darkGrey);

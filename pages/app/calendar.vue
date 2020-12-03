@@ -7,7 +7,7 @@
 				</div>
 				
 				<div v-for="week in cal" :key="cal.indexOf(week)" class="week">
-					<div v-for="day in week" :key="day.iso" class="day">
+					<div v-for="day in week" :key="day.iso" class="day" @click="populateList(day.iso)">
 						<div class="top">
 							<span v-if="day.type === 'previous'" class="prev date-num">{{day.date}}</span>
 							<span v-if="day.type === 'current'" class="curr date-num">{{day.date}}</span>
@@ -16,7 +16,7 @@
 							<svg-icon src="/images/plus.svg" @click="newTask(day.iso)" class="plus-btn"/>
 						</div>
 						<div class="bottom">
-							<div v-for="task in getDaysTasks(day.iso)" :key="task.id" :class="'task-dot '+task.tag.color" ></div>
+							<div v-for="task in getDaysTasks(day.iso, 10)" :key="task.id" :class="'task-dot '+task.tag.color" ></div>
 						</div>
 						
 						<!-- <div class="task-card" v-if=""></div> -->
@@ -24,7 +24,17 @@
 				</div>
 			</div>
 			<div class="calendar_left-col">
-				<h1 class="month-label">{{monthLabel}}</h1>
+				<div class="left-col_top">
+					<h1 class="month-label">{{monthLabel}}</h1>
+					<small class="year-label">{{yearLabel}}</small>
+				</div>
+				<div class="left-col_body">
+					<div v-for="task in displayedTasks" :key="'visual_'+task.id" :class="'cal-task '+task.tag.color">
+						<div class="task-text">{{task.text}}</div>
+						<small class="task-time">{{new Date(task.ts).toLocaleTimeString()}}</small>
+					</div>
+				</div>
+				
 			</div>
 			<small class="helper">scroll to change the month.</small>
 		</div>
@@ -33,9 +43,8 @@
 </template>
 <script lang="ts">
 import {defineComponent, onMounted, reactive, ref, computed, watch} from '@vue/composition-api'
-import core, { PendingTask, Task, tasks } from '~/core'
+import core, { PendingTask, Task, tasks, emitters } from '~/core'
 import CalendarDates from 'calendar-dates'
-import { emitters } from '~/core/emitters'
 import dayjs from 'dayjs'
 const calDates = new CalendarDates()
 export default defineComponent({
@@ -68,6 +77,7 @@ export default defineComponent({
 			'dec',
 		])
 		const monthLabel = computed(() => monthLabels[month.value])
+		const yearLabel = computed(() => year.value)
 		onMounted(async () => {
 			cal.value = await calDates.getMatrix(new Date())
 			tasksThisMonth.value = tasks.findByMonth(new Date())
@@ -106,18 +116,42 @@ export default defineComponent({
 			}
 		}
 
+		// new task stuff
+		const creatingNewTask = ref<boolean>(false);
+
 		const newTask = (isoDate) => {
+			creatingNewTask.value = true
 			let pending: PendingTask = {
 				tag: {title: 'important', color: 'red' },
 				ts: new Date(isoDate).getTime()
 			}
 			emitters.tasks.NEW.emit(pending)
-			// console.log(pending)
+		}
+		onMounted(() => {
+			emitters.tasks.CREATED.on(() => {
+				creatingNewTask.value = false;
+			})
+		})
+
+		// reading the tasks for a specific date
+		const getDaysTasks = (iso: string, max?:number) => {
+			if(max)
+				return tasksThisMonth.value.filter(task => dayjs(iso).isSame(task.ts, 'day')).slice(0, max)
+			else
+				return tasksThisMonth.value.filter(task => dayjs(iso).isSame(task.ts, 'day'))
 		}
 
-		const getDaysTasks = (iso: string) => {
-			return tasksThisMonth.value.filter(task => dayjs(iso).isSame(task.ts, 'day'))
+		const displayedTasks = ref<Array<Task>>([])
+		const populateList = (iso: string) => {
+			const tasks = getDaysTasks(iso);
+			displayedTasks.value.length = 0;
+			displayedTasks.value.push(...tasks)
 		}
+		
+		
+
+
+		
 		return {
 			month,
 			cal,
@@ -125,22 +159,23 @@ export default defineComponent({
 			tasks: tasksThisMonth,
 			scroll,
 			monthLabel,
+			yearLabel,
 			newTask,
-			getDaysTasks
+			getDaysTasks,
+			populateList,
+			displayedTasks
 		}
 	}
 })
 </script>
 <style lang="scss">
+// I should really use css grid for this. I would change that in the future
 #task-calendar_cont{
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	flex-grow: 1;
-	
-	
 	.calendar{
-		
 		padding: 3em 6em;
 		display: flex;
 		position: relative;
@@ -181,6 +216,7 @@ export default defineComponent({
 					margin: 0.6em;
 					padding: 1em;
 					transition: all 0.2s var(--ease);
+					cursor: pointer;
 					
 					.prev, .next{
 						color: var(--darkGrey);
@@ -203,10 +239,19 @@ export default defineComponent({
 							opacity: 0;
 						}
 					}
-					.task-dot{
-						height: 20px;
-						width: 20px;
+					.bottom{
+						display: flex;
+						flex-wrap: wrap;
+						justify-content: space-around;
+						.task-dot{
+							height: 10px;
+							width: 10px;
+							border-radius: 50%;
+							margin-right: 2px;
+							margin-left: 2px;
+						}
 					}
+					
 
 					&:hover{
 						background: rgba(243, 243, 243, 0.1);
@@ -227,12 +272,46 @@ export default defineComponent({
 			min-width: 150px;
 			width: 300px;
 			display: inline-block;
-			.month-label{
-				text-align: center;
-				margin: 0;
-
+			.left-col_top{
+				position: relative;
+				.month-label{
+					text-align: center;
+					margin: 0;
+					cursor: default;
+					
+				}
+				.year-label{
+					position: absolute;
+					top: 0;
+					right: 0;
+					font-size: xx-small;
+					cursor: default;
+				}
 			}
+			.left-col_body{
+				position: relative;
+				padding-top: 50px;
+				overflow-y: auto;
+				.cal-task{
+					border-radius: 25px;
+					color: var(--black);
+					margin-bottom: 1em;
+					padding: 1em 2em;
+					
+					font-size: 16px;
+					.task-text{
+						margin-bottom: 13px;
+						font-weight: 600;
+					}
+					.task-time{
+						font-size: x-small;
+						color: var(--dark);
+					}
+				}
+			}
+			
 		}
+		
 	}
 	
 	

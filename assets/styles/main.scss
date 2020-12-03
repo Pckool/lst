@@ -399,11 +399,13 @@ label.custom {
 ::-webkit-scrollbar-thumb {
 	background: var(--darkGrey);
 	border-radius: 2em;
+	cursor: pointer;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-	background: #555;
+	background: rgb(100, 100, 100);
+	cursor: pointer;
 }
 
 .dual-btns{
