@@ -30,8 +30,8 @@ export default {
             if(!task._id){
                 task = await DB.useIndexGetDocs<Task[]>('task_by_id', task.id)[0];
             }
-            const res = await DB.delete('tasks', task._id);
-            return res;
+            await DB.delete('tasks', task._id);
+            return;
         } catch(err){
             throw err;
         }

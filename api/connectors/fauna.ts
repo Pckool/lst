@@ -32,7 +32,7 @@ class Fauna {
     
     async delete(collectionName:string, _id: any) {
         try{
-            let res = await this.client.query(
+            await this.client.query(
                 this.q.Delete(this.q.Ref(this.q.Collection(collectionName), _id))
             )
             
@@ -110,16 +110,12 @@ class Fauna {
                 )
             ))
             
-            if(pageOfDocs.data){
+            if(Array.isArray(pageOfDocs.data)){
                 const result = <T[]>pageOfDocs.data.map((dataObj) => ({...dataObj.data, _id: dataObj.ref.id})) // flattens the array to only have the data
                 return result
-                // if(result.length === 1){
-                //     return result[0]
-                // }
-                // else{
-                //     return result
-                // }
-                 
+            }
+            else{
+                return;
             }
 
             

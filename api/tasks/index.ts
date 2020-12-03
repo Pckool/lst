@@ -66,12 +66,10 @@ function tasksInit(app: Express){
 			Log.info('Task removed from DB...');
 
 			res.sendStatus(200);
-				
-			Log.info(`Task successfully generated!`);
 			
 		} catch(err){
 			Log.error("Error when trying to delete task "+JSON.stringify(task, null, 2))
-			res.status(500).json(err);
+			res.status(400).json(err);
 		}
 	});
 

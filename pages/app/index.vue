@@ -53,6 +53,7 @@ export default defineComponent({
 				completedTaskIds.value.push(taskId)
 			)
 			todayTaskIds.value = tasks.state.today.value.map(task => task.id)
+			vue.$forceUpdate()
 			// .output.forEach(task => {
 				
 			// })

@@ -26,6 +26,8 @@ export const actions = {
 			// send the new coupon to the database
 			routes.remove(task).then(res => {
 				collection.remove(task.id).fromGroups(task.status)
+				delete collection.data[task.id]
+				collection.rebuildGroupsThatInclude(task.id);
 				emitters.tasks.DELETE.emit()
 			}).catch(err => {
 				reject(err)
