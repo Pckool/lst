@@ -15,7 +15,8 @@
 				<transition-group name="tasks" class="task-list">
 					<task v-for="taskId in completed" :key="taskId" :taskId="taskId" @change="changeSections"/>
 				</transition-group>
-				<span class="no-data" v-if="!completed.length">click the circle on the left side of a task!</span>
+				<span class="no-data" v-if="!completed.length && !tasks.length">create a task to get things going!</span>
+				<span class="no-data" v-else-if="!completed.length">click the circle on the left side of a task!</span>
 			</div>
 			
 		</div>
