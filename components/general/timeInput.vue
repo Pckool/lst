@@ -156,11 +156,11 @@ export default defineComponent({
 		watch(seg, () =>{
 			let newVal = seg.value
 			if(seg.value.length > 2){
-				newVal = seg.value.substring(0, 2);
+				newVal = seg.value.substring(0, 2).toLowerCase().trim();
 			}
 			// if the resulkt is not 'am' or 'pm', default to 'pm'
 			if(newVal.match(/(am)|(pm)/g).length){
-				seg.value = newVal.trim();
+				seg.value = newVal;
 			}
 			else {
 				seg.value = 'pm';
