@@ -26,10 +26,10 @@ class Fauna {
         
     }
     
-    async delete(collectionName:string, id: any) {
+    async delete(collectionName:string, _id: any) {
         try{
             let res = await this.client.query(
-                this.q.Delete(this.q.Ref(this.q.Collection(collectionName), id))
+                this.q.Delete(this.q.Ref(this.q.Collection(collectionName), _id))
             )
             
         } catch(err){
@@ -65,17 +65,19 @@ class Fauna {
         }
         
     }
-    async getOne <T>(collectionName: string): Promise<T[]> {
+    async getOne <T>(collectionName: string, id: string): Promise<T[]> {
         try{
             let page = (await this.client.query(
-                this.q.Paginate(this.q.Documents(this.q.Collection(collectionName))) // @ts-ignore
-            )).data
-            
-            let ret: any[] = (await this.client.query(
-                page.map((document) => this.q.Get(document)) // this wraps all of the document refs in a get function
-            ))
+                this.q.Map(
+                    this.q.Paginate(this.q.Documents(this.q.Collection(collectionName))),
+                    (data) => {
+                        this.q.Get(data)
+                    } 
+                )
+                // @ts-ignore
+            ))?.data
 
-            return <any[]>ret.map((dataObj) => ({...dataObj.data, _id: dataObj.ref.id})) // flattens the array to only have the data
+            return <any[]>page.map((dataObj) => ({...dataObj.data, _id: dataObj.ref.id})) // flattens the array to only have the data
         } catch(err){
             throw err;
         }
@@ -105,8 +107,15 @@ class Fauna {
             ))
             
             if(pageOfDocs.data){
-                
-                return <T[]>pageOfDocs.data.map((dataObj) => ({...dataObj.data, _id: dataObj.ref.id})) // flattens the array to only have the data
+                const result = <T[]>pageOfDocs.data.map((dataObj) => ({...dataObj.data, _id: dataObj.ref.id})) // flattens the array to only have the data
+                return result
+                // if(result.length === 1){
+                //     return result[0]
+                // }
+                // else{
+                //     return result
+                // }
+                 
             }
 
             

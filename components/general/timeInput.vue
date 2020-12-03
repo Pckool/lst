@@ -120,7 +120,7 @@ export default defineComponent({
 				newVal = minute.value.substring(0, 2);
 			}
 			newVal = newVal.replace(/[A-z]/g, '').padStart(2, '0').trim();
-			console.log(newVal)
+			// console.log(newVal)
 			let newValNum = Number(newVal);
 			if(!isNaN(newValNum) && newValNum < 0){
 				newVal = `${0}`

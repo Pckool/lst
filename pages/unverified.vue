@@ -6,29 +6,39 @@
             <dynamic-input type="text" v-model="code" placeholder="" @keypress.enter="submit(code)"/>
             <!-- <input type="text" v-model="code"> -->
             <button @click="submit(code)" :disabled="disabled">verify</button>
-            <small class="reverify" @click="resendVerif">send again</small>
+            <small class="reverify" @click="resendVerif" v-if="!sendingCode">send again</small>
         </div>
         <span></span>
         
     </div>
 </template>
 <script lang="ts">
-import {defineComponent, ref, watch} from '@vue/composition-api'
+import {defineComponent, getCurrentInstance, onMounted, ref, watch} from '@vue/composition-api'
 import dynamicInput from '~/components/general/dynamicInput.vue'
-import { user } from '~/core'
+import { alerts, user } from '~/core'
 
 export default defineComponent({
     components: {dynamicInput},
     setup(ctx){
         const code = ref('');
         const disabled = ref(true);
-        const submit = (inp: string) => {
+        const vue = getCurrentInstance();
+        const sendingCode = ref<boolean>(false)
+        const submit = async (inp: string) => {
             if(code.value.length === 6){
+                sendingCode.value = true
                 const codeAttempt = Number(inp)
                 if(!isNaN(codeAttempt)){
-                    user.verify(user.state.email.value, codeAttempt).then((res) => {
+                    try{
+                        const res = await user.verify(user.state.email.value, codeAttempt)
                         user.setProp('verified', true)
-                    })
+                        sendingCode.value = false
+                        vue.$router.push('/app')
+                    }
+                    catch(err){
+                        alerts.create({message: 'verification failed!'})
+                        console.warn(err.message)
+                    }
                 }
                 code.value = '';
             }
@@ -49,14 +59,23 @@ export default defineComponent({
                 disabled.value = true
             }
         })
-        const resendVerif = () =>  {
-            user.resendverify()
+        const resendVerif = async () =>  {
+            try{
+                sendingCode.value = true
+                await user.resendverify()
+                sendingCode.value = false
+                alerts.create({message: 'message sent!'})
+            }
+            catch(err){
+
+            }
         }
         return {
             code,
             submit,
             disabled,
-            resendVerif
+            resendVerif,
+            sendingCode
         }
     }
 })

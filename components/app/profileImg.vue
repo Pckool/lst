@@ -5,7 +5,7 @@
 				
 			</div>
 			<svg-icon src="/images/Download.svg" alt="" class="ico"/>
-			<input ref="input" id="file-input_profile-icon" type="file" name="name" style="display: none;" @change="imgChange"/>
+			<input ref="input" id="file-input_profile-icon" type="file" name="name" style="display: none;" @change="imgChange" accept=".jpg, .jpeg, .png"/>
 			<img :src="imgData" alt="" class="img">
 			
 		</div>
@@ -38,8 +38,40 @@ export default defineComponent({
 		const imgChange = async (e) => {
 			const file = (<HTMLInputElement>e.target).files[0];
 			if(file){
+				const can: HTMLCanvasElement = document.createElement('canvas')
+				const img: HTMLImageElement = document.createElement('img')
+
+				
+				img.src = await toBase64(file)
+				img.onload = () => {
+					const h = img.height
+					const w = img.width
+					const targetWidth = 245
+					if(h > targetWidth || w > targetWidth){
+						can.height = h
+						can.width = w
+						const ctx = can.getContext("2d")
+						let nH = h;
+						let nW = w;
+						if(w>h){
+							nW = h
+						}
+						else {
+							nH = w
+						}
+						
+						const ratio = targetWidth / img.width
+						ctx.drawImage(img, 0, 0, targetWidth, img.height*ratio);
+					}
+					
+
+					
+				}
+				
+
 				imgData.value = await toBase64(file);
-				console.log(imgData);
+				
+
 				waiting.value = true;
 				if(timeout) {
 					clearTimeout(timeout);
@@ -59,7 +91,9 @@ export default defineComponent({
 				if(timeout){
 					clearTimeout(timeout);
 				}
+				console.log('cancalled image upload')
 				imgData.value = user.state.img_url.value;
+				waiting.value = false;
 			}
 		}
 		const checkIfImgIsSet = () => {

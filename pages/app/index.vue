@@ -109,8 +109,8 @@ export default defineComponent({
 		padding: 0em 0em 0.5em 1em;
 	}
 	.tasks_cont{
-		flex-shrink: 1;
-		padding: 6em 6em 0em 6em;
+		flex-grow: 1;
+		padding: 6em 6em 3em 6em;
 		display: flex;
 		flex-flow: row wrap;
 		justify-content: space-around;

@@ -72,13 +72,17 @@ export const actions = {
 		
 
 	},
-	findByMonth(month: number): Task[]|undefined{
+	findByMonth(date: number|Date|string): Task[]|undefined{
 		try{
-			const date = new Date();
-			date.setMonth(month, 1)
-			date.setHours(0, 0, 0)
-			let tasks = Object.values(collection.data).map(data => data.value)
-			return tasks.filter(task => dayjs(task.ts).isSame(date.toLocaleDateString(), 'month'));
+			const _date = new Date(date);
+			_date.setHours(0, 0, 0)
+			const tasks = Object.values(collection.data).map(data => data.value)
+			const result = tasks?.filter(task => {
+				console.log(new Date(task.ts), "vs", _date)
+				return dayjs(new Date(task.ts)).isSame(_date, 'month')
+			});
+			console.log(result)
+			return result
 		} catch(err){
 
 		}

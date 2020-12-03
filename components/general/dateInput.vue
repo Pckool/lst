@@ -34,7 +34,7 @@ export default defineComponent({
 			// dont forget to add 1 to the month value BEFORE passing it to this function
 			if(month > 0 && month < 13){
 				const d = new Date(year||new Date().getFullYear(), month, 0);
-				console.log(d)
+				// console.log(d)
 				return d.getDate() 
 			}
 			console.warn('Month was invalid; defaulting to 31...')
@@ -140,12 +140,13 @@ export default defineComponent({
 				newVal = `${12}`
 			}
 			month.value = newVal;
+			// console.log('month', month.value)
 		})
 
 		watch(date, () =>{
 			// init variables
 			const lastDate = getLastDateInMonth(Number(month.value), Number(year.value))
-			console.log(lastDate)
+			// console.log(lastDate)
 			let newVal = date.value
 
 			// checking logic
@@ -153,7 +154,9 @@ export default defineComponent({
 				newVal = date.value.substring(0, 2);
 			}
 			newVal = newVal.replace(/[A-z]/g, '').padStart(2, '0').trim();
-			let newValNum = Number(newVal);
+
+			const newValNum = Number(newVal);
+			// console.log(newValNum)
 			if(!isNaN(newValNum) && newValNum < 1){
 				newVal = `${1}`
 			}
@@ -161,6 +164,8 @@ export default defineComponent({
 				newVal = `${lastDate}`
 			}
 			date.value = newVal;
+			// console.log('date', date.value)
+
 		})
 
 		
@@ -179,15 +184,18 @@ export default defineComponent({
 				newVal = `${new Date().getFullYear()}`
 			}
 			year.value = newVal;
+			// console.log('year', year.value)
+
 		})
 
 		const backup = ref<string>()
 		watchEffect(() => {
 			const value = `${year.value}-${month.value}-${date.value}`
 			const dateValue = new Date(value + "T00:00:00")
+			console.log(dateValue)
 			if(dateValue){
 				backup.value = value
-				ctx.emit('change', value)
+				ctx.emit('change', dateValue.toUTCString())
 				ctx.emit('date', dateValue)
 			}
 			// TODO: check to seee if the generated date differs from the component values (essentially, check to see if the date is valid)

@@ -154,8 +154,8 @@ export default Vue.extend({
 				console.timeLog("auth-request-"+time_id, 'Authentication request failed.');
 			}
 		} catch (err) {
-			console.timeLog("auth-request-"+time_id, 'authentication request took too long...');
-			console.error(err);
+			console.timeLog("auth-request-"+time_id, 'authentication request took too long or failed...');
+			// console.error(err);
 			
 		} finally{
 			console.timeEnd('auth-request-'+time_id)

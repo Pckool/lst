@@ -75,12 +75,12 @@ export default defineComponent({
 .text_large{
     margin: 0.5em 0 0 0;
     transform: all 0.2s var(--ease);
-    padding-bottom: 1.3em;
+    padding-bottom: 4rem;
     letter-spacing: 0.2em;
     font-weight: 900;
     font-size: 95px;
     min-height: 95px;
-    max-height: 350px;
+    // max-height: 350px;
     color: var(--grey);
     &:focus{
         color: var(--white);

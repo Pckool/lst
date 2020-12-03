@@ -15,7 +15,9 @@
 
 							<svg-icon src="/images/plus.svg" @click="newTask(day.iso)" class="plus-btn"/>
 						</div>
-						
+						<div class="bottom">
+							<div v-for="task in getDaysTasks(day.iso)" :key="task.id" :class="'task-dot '+task.tag.color" ></div>
+						</div>
 						
 						<!-- <div class="task-card" v-if=""></div> -->
 					</div>
@@ -34,12 +36,14 @@ import {defineComponent, onMounted, reactive, ref, computed, watch} from '@vue/c
 import core, { PendingTask, Task, tasks } from '~/core'
 import CalendarDates from 'calendar-dates'
 import { emitters } from '~/core/emitters'
+import dayjs from 'dayjs'
 const calDates = new CalendarDates()
 export default defineComponent({
 	setup(props, ctx){
 		const tasksThisMonth = ref<Task[]>()
 		const cal = ref()
 		const month = ref<number>(new Date().getMonth())
+		const year = ref<number>(new Date().getFullYear())
 		const labels = reactive<string[]>([
 			'sun',
 			'mon',
@@ -66,18 +70,19 @@ export default defineComponent({
 		const monthLabel = computed(() => monthLabels[month.value])
 		onMounted(async () => {
 			cal.value = await calDates.getMatrix(new Date())
-			tasksThisMonth.value = tasks.findByMonth(month.value)
+			tasksThisMonth.value = tasks.findByMonth(new Date())
 		})
 
 		watch(month, async () => {
 			const date = new Date()
+			
+			date.setFullYear(year.value, month.value, 1)
 			date.setHours(0,0,0)
-			date.setMonth(month.value, 1)
 			cal.value = await calDates.getMatrix(date)
-			tasksThisMonth.value = tasks.findByMonth(month.value)
+			tasksThisMonth.value = tasks.findByMonth(date)
 			// extracting ISO date value from the ts
 			tasksThisMonth.value = tasksThisMonth.value.map(task => ({...task, iso: new Date(task.ts).toISOString().split('T')[0]}))
-
+			console.log(tasksThisMonth.value)
 			
 		})
 
@@ -85,6 +90,7 @@ export default defineComponent({
 			if(e.deltaY < 0){
 				// going up
 				if(month.value+1 >11){
+					year.value++;
 					return month.value = 0;
 				}
 				month.value = ++month.value;
@@ -93,6 +99,7 @@ export default defineComponent({
 			else{
 				// going down
 				if(month.value-1 < 0){
+					year.value--;
 					return month.value = 11;
 				}
 				month.value = --month.value;
@@ -107,6 +114,10 @@ export default defineComponent({
 			emitters.tasks.NEW.emit(pending)
 			// console.log(pending)
 		}
+
+		const getDaysTasks = (iso: string) => {
+			return tasksThisMonth.value.filter(task => dayjs(iso).isSame(task.ts, 'day'))
+		}
 		return {
 			month,
 			cal,
@@ -115,6 +126,7 @@ export default defineComponent({
 			scroll,
 			monthLabel,
 			newTask,
+			getDaysTasks
 		}
 	}
 })
@@ -162,6 +174,7 @@ export default defineComponent({
 					
 					display: flex;
 					flex-flow: column nowrap;
+					justify-content: space-between;
 					height: 100px;
 					width: 100px;
 					border: 2px solid var(--darkGrey);
@@ -189,6 +202,10 @@ export default defineComponent({
 							transition: all 0.2s var(--ease);
 							opacity: 0;
 						}
+					}
+					.task-dot{
+						height: 20px;
+						width: 20px;
 					}
 
 					&:hover{

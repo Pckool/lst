@@ -13,6 +13,7 @@ export default defineComponent({
 	},
 	setup(props){
 		// require(`~/static${props.src}`)
+		
 		try{
 			const svgString = ref<string|null>();
 			const vue = getCurrentInstance();
@@ -22,6 +23,7 @@ export default defineComponent({
 				const res = await fetch(props.src)
 				svgString.value = await res.text()
 				vue.$el.innerHTML = svgString.value;
+				
 			})
 			return {
 

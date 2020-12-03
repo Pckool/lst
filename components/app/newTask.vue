@@ -31,23 +31,31 @@
 	</div>
 </template>
 <script lang="ts">
-import {defineComponent, getCurrentInstance, reactive, ref} from '@vue/composition-api'
-import core, { PendingTask, Task, tasks, user } from '~/core'
+import {defineComponent, getCurrentInstance, onBeforeUnmount, onMounted, reactive, ref} from '@vue/composition-api'
+import core, { emitters, PendingTask, Task, tasks, user } from '~/core'
 import DynamicInput from '~/components/general/dynamicInput.vue'
 import SvgIcon from '~/components/general/svgIcon.vue'
 import LargeInput from '~/components/general/largeInput.vue'
 import DateInput from '~/components/general/dateInput.vue'
 import TimeInput from '~/components/general/timeInput.vue'
+import anime from 'animejs'
+
 
 export default defineComponent({
 	components: {DynamicInput, SvgIcon, LargeInput, DateInput, TimeInput},
 	setup(props, ctx){
-		const task = reactive<PendingTask>(tasks.state.pending.value)
+		const task = ref<PendingTask>(tasks.state.pending.value)
+		
 		const text = ref<string>('Pick up dog food')
-		const ts = new Date(task.ts)
+		const ts = new Date(task.value.ts)
 		const time = ref<string>(`${ts.getHours()}`.padStart(2, '0') + ':' + `${ts.getMinutes()}`.padStart(2, '0'))
 		const date = ref<string>(`${ts.getFullYear()}`+'-'+`${ts.getMonth()+1}`.padStart(2, '0')+'-'+`${ts.getDate()}`.padStart(2, '0'))
-
+		const genDateTime = (d: Date|number|string) => {
+			const ts = new Date(d)
+			time.value = `${ts.getHours()}`.padStart(2, '0') + ':' + `${ts.getMinutes()}`.padStart(2, '0')
+			date.value = `${ts.getFullYear()}`+'-'+`${ts.getMonth()+1}`.padStart(2, '0')+'-'+`${ts.getDate()}`.padStart(2, '0')
+		}
+		// when the user is ready to create the task
 		const submit = () => {
 			const newTs = new Date(ts);
 			const splitTime = time.value.split(':').map(v => Number(v))
@@ -55,16 +63,64 @@ export default defineComponent({
 			
 			newTs.setHours(splitTime[0], splitTime[1])
 			newTs.setFullYear(splitDate[0], splitDate[1], splitDate[2])
-			task.ts = newTs.getTime()
-			task.text = text.value
-			task.owner = user.state.id.value
-			task.status = 'inprogress'
-			tasks.add(task).then((genTask: Task) => {
+			task.value.ts = newTs.getTime()
+			task.value.text = text.value
+			task.value.owner = user.state.id.value
+			task.value.status = 'inprogress'
+			tasks.add(task.value).then((genTask: Task) => {
 				core.emitters.tasks.CREATED.emit(genTask);
 				ctx.emit('close')
 				
 			});
 		}
+		// for emitter update
+		onMounted(() => {
+			emitters.general.BLUR.emit(true);
+			emitters.tasks.NEW.on(payload => {
+				if(payload.ts){
+					genDateTime(payload.ts)
+				}
+				if(payload.tag){
+					task.value = {...task.value, tag: payload.tag}
+				}
+				if(payload.text){
+					task.value = {...task.value, text: payload.text}
+				}
+			})
+		})
+		onBeforeUnmount(() => {
+			emitters.general.BLUR.emit(false);
+		})
+
+		// for animation
+		const vue = getCurrentInstance();
+		onMounted(() => {
+			vue.$nextTick(() => {
+				const el: HTMLElement = document.querySelector('#new-task_cont')
+				anime.timeline({
+					
+					easing: 'easeInOutQuad',
+					
+					complete(){
+						console.log('animating')
+					}
+				}).add({
+					targets: '#new-task_cont',
+					width: [0, el.offsetWidth],
+					duration: 500,
+				}, '+=100').add({
+					targets: document.querySelectorAll('#new-task_cont .header'),
+					opacity: [0, 1],
+					duration: 300,
+				}, '-=100').add({
+					targets: document.querySelectorAll('#new-task_cont .in-cont, #new-task_cont button'),
+					delay: anime.stagger(300),
+					opacity: [0, 1],
+					duration: 300,
+				})
+			})
+			
+		})
 		return {
 			task,
 			text,
@@ -132,6 +188,7 @@ export default defineComponent({
 			display: flex;
 			flex-flow: row wrap;
 			margin-top: 1em;
+			padding-bottom: 4rem;
 			input{
 				min-height: 0;
 				min-width: 0;
@@ -144,8 +201,12 @@ export default defineComponent({
 	}
 	.body{
 		overflow-y: auto;
+		overflow-x: hidden;
 		flex-shrink: 1;
-		padding: 5em 6em 1em 6em;
+		padding: 3em 6em 3em 6em;
+		button{
+
+		}
 		
 		
 	}

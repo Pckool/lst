@@ -10,7 +10,7 @@ import Log from './logger';
 
 let ORIGIN = '';
 const whitelist = [
-	
+	'http://lst.philippec.me'
 ];
 const corsOptions = {
 	// origin(origin: any, callback: any) {
@@ -24,7 +24,7 @@ const corsOptions = {
 	// 		callback(new Error('Not allowed by CORS.'))
 	// 	}
 	// },
-	origin: 'http://lst.philippec.me',
+	origin: process.env.NODE_ENV==="production" ? 'http://lst.philippec.me' : 'http://localhost:8080',
 	credentials: true
 }
 
@@ -49,7 +49,6 @@ app.use('/user', authRoutes)
 app.use('/task', taskRoutes)
 // Init Nuxt.js
 const isDev = process.env.NODE_ENV !== 'production';
-console.log("is dev?", isDev);
 
 // Listen the server
 export default app;

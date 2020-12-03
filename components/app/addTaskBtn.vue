@@ -32,7 +32,7 @@ export default defineComponent({
             const tag = el.getAttribute('tag');
             const option = options.find(option => option.tag.color === tag)
             ctx.emit('option', option)
-            core.emitters.tasks.NEW.emit({tag: option.tag, ts: Date.now()})
+            core.emitters.tasks.NEW.emit({tag: option.tag})
         }
         
         return {

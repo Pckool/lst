@@ -27,7 +27,7 @@ function tasksInit(app: Express){
 	router.post('/add', async (req: any, res: any) => {
 		let task;
 		try{
-			Log.info('checking if the user exists...');
+			Log.info('checking if the task exists...');
 			
 			// if (err) throw err;
 			task = {
@@ -47,6 +47,30 @@ function tasksInit(app: Express){
 			
 		} catch(err){
 			Log.error("Error when trying to create task "+JSON.stringify(task, null, 2))
+			res.status(500).json(err);
+		}
+	});
+
+	router.post('/remove', async (req: any, res: any) => {
+		let task;
+		try{
+			Log.info('checking if the user exists...');
+			
+			// if (err) throw err;
+			task = {
+				...req.body,
+			}
+			
+			await TDB.remove(task);
+
+			Log.info('Task removed from DB...');
+
+			res.sendStatus(200);
+				
+			Log.info(`Task successfully generated!`);
+			
+		} catch(err){
+			Log.error("Error when trying to delete task "+JSON.stringify(task, null, 2))
 			res.status(500).json(err);
 		}
 	});

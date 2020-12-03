@@ -22,8 +22,8 @@ import {User} from '../interfaces';
 var session = require('express-session');
 const redis = require('redis')
 
-// let RedisStore = require('connect-redis')(session)
-// let redisClient = redis.createClient()
+let RedisStore = require('connect-redis')(session)
+let redisClient = redis.createClient()
 
 const nonce = Nonce(34);
 
@@ -38,7 +38,7 @@ function authInit(app: Express){
             secure: true 
         },
         // rolling: true,
-        // store: new RedisStore({ client: redisClient }),
+        store: new RedisStore({ client: redisClient }),
         saveUninitialized: false,
         resave: false,
     }))
@@ -135,7 +135,8 @@ function authInit(app: Express){
 
 	router.post('/update', async (req: any, res: any) => {
 		try{
-			await UDB.update(req.body.id, req.body)
+			const user = await UDB.findUser(req.body.email.toLowerCase());
+			await UDB.update(user._id, req.body)
 			// let login = util.promisify(req.login)
 			// await login(user);
 			

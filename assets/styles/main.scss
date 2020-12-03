@@ -679,38 +679,5 @@ label.custom {
 	pointer-events: all;
 }
 
-#alert{
-	position: fixed;
-	z-index: 1500;
-	top: 0;
-	left: 0;
-	width: 100vw;
-	padding: 1em;
-	
-	display: flex;
-	flex-flow: column wrap;
-	pointer-events: none;
-	.inner{
-		pointer-events: all;
-		cursor: pointer;
-		border-radius: 20px;
-		background: var(--Red);
-		color: var(--white);
-		display: flex;
-		justify-content: space-between;
-		align-content: center;
-		align-items: baseline;
-		align-self: center;
-		padding: 1em 1.5em;
-		i{
-			padding-right: 0.5em;
-		}
-		span{
-			text-transform: capitalize;
-			color: var(--white);
-			font-family: 'Roboto';
-			font-weight: 700;
-		}
-	}
-}
+
 

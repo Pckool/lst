@@ -10,7 +10,7 @@ const api = App.API({
 })
 export const fetchers = {
     add: async (data): Promise<any> => (await api.post('task/add', data)),
-    remove: async (data) => (await api.post('task/add', data)),
+    remove: async (data) => (await api.post('task/remove', data)),
     change: async (data): Promise<any> => (await api.post('task/update', data)),
     getAll: async (data): Promise<any> => (await api.post('task/getall', data)),
 }

@@ -1,5 +1,5 @@
 <template>
-    <div id="alert" style="transform: translateY(-300px)">
+    <div id="alert" style="transform: translateY(300px)">
         <div class="inner" @click="close">
             <i class="fas fa-bell fa-sm"></i>
             <span>{{str}}</span>
@@ -25,7 +25,7 @@ export default Vue.extend({
         close(){
             anime({
                 targets: '#alert',
-                translateY: [0, -300],
+                translateY: [0, 300],
                 scale: [1, 0.7],
                 duration: 300,
                 easing: 'easeInQuad',
@@ -38,7 +38,7 @@ export default Vue.extend({
         open(){
             anime({
                 targets: '#alert',
-                translateY: [-300, 0],
+                translateY: [300, 0],
                 scale: [0.7, 1],
                 duration: 300,
                 delay: 400,
@@ -70,7 +70,9 @@ export default Vue.extend({
                     });
                 },
                 complete: () => {
-                    setTimeout(this.close, 7000);
+                    setTimeout(() => {
+                        this.close()
+                    }, 7000);
                     
                 }
             })
@@ -92,5 +94,41 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-
+#alert{
+	position: fixed;
+	z-index: 1500;
+	bottom: 0;
+	left: 0;
+	width: 100vw;
+    padding: 0.5em;
+    cursor: pointer;
+	
+	display: flex;
+	flex-flow: column wrap;
+    pointer-events: none;
+    background: var(--black);
+    border-top: 1px solid var(--darkGrey);
+	.inner{
+		pointer-events: all;
+		cursor: pointer;
+		// border-radius: 20px;
+        
+		color: var(--white);
+		display: flex;
+		justify-content: space-between;
+		align-content: center;
+		align-items: baseline;
+		align-self: center;
+		padding: 1em 1.5em;
+		i{
+			padding-right: 0.5em;
+		}
+		span{
+			text-transform: capitalize;
+			color: var(--white);
+			font-family: 'Inter';
+			// font-weight: 700;
+		}
+	}
+}
 </style>

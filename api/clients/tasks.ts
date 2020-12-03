@@ -24,9 +24,11 @@ export default {
         
     },
 
-    async remove(username: string) {
+    async remove(id: string) {
         try{
-            const res = await DB.delete('tasks', username);
+            const task = await DB.useIndexGetDocs<Task[]>('task_by_id', id)[0];
+            const res = await DB.delete('tasks', task._id);
+            return res;
         } catch(err){
             throw err;
         }

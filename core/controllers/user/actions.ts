@@ -79,6 +79,8 @@ export const actions = {
             tasks.state.pending.set({});
             this.setProp('id', '');
             this.setProp('name', '');
+            this.setProp('img_url', '');
+            this.setProp('number', '');
             this.setProp('verified', false);
             
             

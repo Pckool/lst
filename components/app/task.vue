@@ -1,7 +1,7 @@
 <template>
 	<div :class="'task '+task.tag.color" :id="task.id" :status="task.status" :waiting="waiting">
 		<div class="bar">
-			<div class="bar_check_text">
+			<div class="bar_check_text" :blur="openMore">
 				<checkbox v-model="checked"/>
 				<div class="text_cont">
 					<reg-input class="text" v-model="task.text" v-if="task.status === 'inprogress'"/>
@@ -14,7 +14,13 @@
 				</div>
 			</div>
 			
-			<span @click="deleteTask(task)" class="more"><svg-icon src="/images/more.svg" /></span>
+			<span class="more" ref="moreEl">
+				<svg-icon src="/images/more.svg" @click="openMore=!openMore" :opened="openMore"/>
+				<div class="more-drop" v-if="openMore">
+					<small @click="deleteTask(task)"><i class="fas fa-trash fa-sm"></i></small>
+				</div>
+			</span>
+			
 		</div>
 		
 		<div class="loading-bar"></div>
@@ -23,7 +29,7 @@
 <script lang="ts">
 import {computed, defineComponent, onBeforeMount, onMounted, ref, watch} from '@vue/composition-api'
 import checkbox from '~/components/general/checkbox.vue'
-import { Task, tasks } from '~/core';
+import { emitters, Task, tasks } from '~/core';
 
 export default defineComponent({
   components: { checkbox },
@@ -39,6 +45,9 @@ export default defineComponent({
 		const task = ref<Task>(tasks.collection.getValueById(props.taskId))
 		const checked = ref<boolean>(task.value.status === "complete")
 		const waiting = ref<boolean>(false)
+		const openMore = ref<boolean>(false)
+		const moreEl = ref<HTMLElement>()
+
 		// const strikethrough = ref<string>('')
 		onBeforeMount(() => {
 			if(props.taskId){
@@ -46,6 +55,25 @@ export default defineComponent({
 				// checked.value = task.value.status === "complete"
 			}
 			
+		})
+		let eventListener;
+		watch(openMore, () => {
+			const elFnc = function(e) {
+				const target = (<HTMLElement>e.target)
+				// console.log(target !== moreEl.value, Array.from(moreEl.value.children).indexOf(target))
+
+				if(target !== moreEl.value && Array.from(moreEl.value.children).indexOf(target) === -1){
+					openMore.value = false
+				}
+			}
+			console.log(openMore.value)
+			if(openMore.value){
+				console.log('in first')
+				eventListener = document.addEventListener('click', elFnc)
+			}
+			else{
+				document.removeEventListener('click', elFnc)
+			}
 		})
 		
 		watch(checked, () => {
@@ -55,7 +83,7 @@ export default defineComponent({
 				timeout.value = null;
 			}
 			
-			// This logic is to autosave after 3 seconds, if the user changes their mind within 3 seconds, it cancels the save because the state is back where it was originally
+			// This logic is to autosave after 3 seconds, if the user changes their mind within 3 seconds, it cancels the save and returns the state to it's original path
 			if(checked.value){
 				if(prevValue && prevValue === 'complete'){
 					prevValue = null;
@@ -86,10 +114,21 @@ export default defineComponent({
 				console.log('Task updated...')
 				waiting.value = false;
 			}, 3000)
-			
-			
-			
 		})
+
+		const deleteTask = async (task: Task) => {
+			try{
+				console.log('Deleting task...')
+				await tasks.del(task);
+				emitters.alerts.ALERT.emit({message: 'task removed'})
+				console.log('Task removed...')
+				ctx.emit('close')
+			}
+				
+			catch(err){
+				
+			}
+		}
 
 		const strikethrough = computed(() => task.value.status === 'complete' ? 'extend' : '' )
 		return {
@@ -97,6 +136,9 @@ export default defineComponent({
 			task,
 			strikethrough,
 			waiting,
+			deleteTask,
+			openMore,
+			moreEl,
 		}
 	}
 })
@@ -129,7 +171,7 @@ export default defineComponent({
 		.bar_check_text{
 			display: flex;
 			flex-wrap: nowrap;
-			align-items: center;
+			align-items: flex-start;
 			flex-grow: 1;
 
 		}
@@ -138,6 +180,8 @@ export default defineComponent({
 	.text_cont{
 		position: relative;
 		flex-grow: 1;
+		padding-right: 1em;
+
 		.text{
 			overflow-wrap: anywhere;
 			color: var(--black);
@@ -163,16 +207,33 @@ export default defineComponent({
 	}
 	
 	.more{
-		padding: 0em 0em 0em 1em;
 		cursor: pointer;
 		display: inline-flex;
 		justify-content: center;
 		align-items: center;
+		position: relative;
+		height: fit-content;
+		width: 17px;
+		&[opened="true"]{
+			background: var(--white);
+		}
 		svg{
 			circle, rect{
 				fill: var(--black) !important;
 			}
 			
+		}
+		.more-drop{
+			position: absolute;
+			top: 100%;
+			left: 50%;
+			transform: translateX(-50%);
+			background: var(--white);
+			padding: 12px;
+			display: flex;
+			flex-flow: column nowrap;
+			border-radius: 7px;
+
 		}
 	}
 	&[status="complete"]{

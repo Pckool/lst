@@ -7,7 +7,7 @@
 				<new-task v-if="openNewTask" @close="openNewTask=false" class=""  key="new-task-panel"/>
 			</transition>
 		</div>
-		<div id="app_core" v-if="!loading">
+		<div id="app_core" v-if="!loading" :blur="blur">
 			
 			<div class="top_cont">
 				
@@ -31,6 +31,7 @@
 			<nuxt/>
 			
 		</div>
+		<div id="blur-app" v-if="blur"></div>
 		<alert/>
 		
 	</div>
@@ -61,6 +62,7 @@ export default defineComponent({
 		const currentTag = ref('Tasks');
 		const loading = ref<boolean>(true)
 		const vue = getCurrentInstance();
+		const blur = ref<boolean>(false)
 
 		onBeforeMount(() => {
 			verified.value = user.state.verified.value;
@@ -75,11 +77,13 @@ export default defineComponent({
         onMounted(() => {
             emitters.tasks.NEW.on(payload => {
                 console.log('new event being created!')
-				openNewTask.value = true;
+				openNewTask.value = false;
 				tasks.state.pending.set(payload);
+				openNewTask.value = true;
 			})
 			emitters.tasks.CREATED.on(payload => {
-				openNewTask.value = true;
+				openNewTask.value = false;
+				taskNumber.value = getTasksAmo();
 			})
         })
 
@@ -101,10 +105,10 @@ export default defineComponent({
 					easing: 'easeInOutQuad'
 				})
 			})
-			
-			
-			emitters.tasks.CREATED.on(() => {
-				taskNumber.value = getTasksAmo();
+
+			emitters.general.BLUR.on(val => {
+				console.log('blur is ', val)
+				blur.value = val;
 			})
 		})
 
@@ -127,7 +131,8 @@ export default defineComponent({
 			taskNumber,
 			loading,
 			openNewTask,
-			logout
+			logout,
+			blur
 		}
 	}
 })
@@ -156,6 +161,7 @@ export default defineComponent({
 		
 	}
 	#app_core{
+		transition: all 0.4s var(--ease);
 		display: flex;
 		flex-flow: column;
 		flex-grow: 1;
@@ -228,6 +234,18 @@ export default defineComponent({
 	.nav-enter, .nav-leave-to{
 		width: 0px;
 		height: 0px;
+	}
+	#blur-app{
+		position: fixed;
+		height: 100%;
+		widows: 100%;
+		top: 0;
+		left: 0;
+		z-index: 700;
+		filter: blur(3px);
+	}
+	[blur="true"]{
+		filter: blur(3px);
 	}
 
 	

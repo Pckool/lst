@@ -61,7 +61,7 @@ export default {
     async update(_id: string, data: any) {
         try{
             console.log(`searching for %s in db...`, _id)
-            // const user = (await DB.useIndexGetDocs<User>('find_by_id', _id))[0];
+            // const user = (await DB.useIndexGetDocs<User>('user_by_id', id))[0];
             const res = await DB.update('users', _id, data);
             return res
         } catch(err){

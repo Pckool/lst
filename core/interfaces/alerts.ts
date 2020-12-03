@@ -13,6 +13,6 @@ export interface AlertConfig {
 export interface Alert {
     name?: string;
     message: string;
-    ts: number;
+    ts?: number;
     type?: AlertTypes;
 }
