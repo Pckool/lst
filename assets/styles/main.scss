@@ -21,6 +21,7 @@ body{
 	// -moz-osx-font-smoothing: grayscale;
 	background: var(--black);
 	color: var(--white);
+	overflow: hidden;
 }
 b{
 	font-weight: 600;
@@ -78,17 +79,17 @@ h1{
 	text-align: left;
 	font-size: 95px;
 	@media screen and (max-width: 3830px){
-						font-size: 95px;
-					}
-					@media screen and (max-width: 1830px){
-						font-size: 61px;
-					}
-					@media screen and (max-width: 1280px){
-						font-size: 47px;
-					}
-					@media screen and (max-width: 1080px){
-						font-size: 34px;
-					}
+		font-size: 95px;
+	}
+	@media screen and (max-width: 1830px){
+		font-size: 61px;
+	}
+	@media screen and (max-width: 1280px){
+		font-size: 47px;
+	}
+	@media screen and (max-width: 1080px){
+		font-size: 34px;
+	}
 }
 h2{
 	// font-family: 'Roboto', sans-serif;

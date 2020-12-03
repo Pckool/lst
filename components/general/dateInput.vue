@@ -192,7 +192,7 @@ export default defineComponent({
 		watchEffect(() => {
 			const value = `${year.value}-${month.value}-${date.value}`
 			const dateValue = new Date(value + "T00:00:00")
-			console.log(dateValue)
+			// console.log(dateValue)
 			if(dateValue){
 				backup.value = value
 				ctx.emit('change', value)
@@ -225,7 +225,19 @@ export default defineComponent({
 
 	.sep{
 		padding: 0 0.4em;
-		font-size: 95px;
+		@media screen and (max-width: 3830px){
+			font-size: 95px;
+		}
+		@media screen and (max-width: 1830px){
+			font-size: 61px;
+		}
+		@media screen and (max-width: 1280px){
+			font-size: 47px;
+		}
+		@media screen and (max-width: 1080px){
+			font-size: 34px;
+			padding: 0 0.2em;
+		}
 	}
 }
 </style>

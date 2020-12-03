@@ -29,8 +29,6 @@ export const actions = {
 				collection.remove(task.id).everywhere
 				resolve(res);
 			}).catch(err => {
-
-
 				reject(err)
 			});
 		})

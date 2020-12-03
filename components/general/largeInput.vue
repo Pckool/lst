@@ -78,8 +78,8 @@ export default defineComponent({
     padding-bottom: 4rem;
     letter-spacing: 0.2em;
     font-weight: 900;
-    font-size: 95px;
-    min-height: 95px;
+    // font-size: 95px;
+    // min-height: 95px;
     // max-height: 350px;
     color: var(--grey);
     &:focus{

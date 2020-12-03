@@ -1,5 +1,5 @@
 <template>
-	<div id="new-task_cont">
+	<div id="new-task_cont_mobile">
 		<div class="header">
 			<div class="header-left">
 				<small>new task</small>
@@ -78,6 +78,7 @@ export default defineComponent({
 			}
 			catch(err){
 				console.warn(err)
+				ctx.emit('close')
 			}
 				
 			
@@ -113,7 +114,7 @@ export default defineComponent({
 					easing: 'easeInOutQuad',
 				}).add({
 					targets: '#new-task_cont',
-					width: [0, el.offsetWidth],
+					height: [0, el.offsetHeight],
 					duration: 500,
 				}, '+=100').add({
 					targets: document.querySelectorAll('#new-task_cont .header'),
@@ -155,19 +156,20 @@ export default defineComponent({
 })
 </script>
 <style lang="scss">
-#new-task_cont{
+#new-task_cont_mobile{
 	transition: all 0.2s var(--ease);
-	position: absolute;
+	position: fixed;
 	z-index: 300;
-	top: 0;
-	left: 100%;
+	bottom: 0;
+	left: 0;
 	width: fit-content;
 	height: 100%;
+	width: 100%;
 	background: var(--dark);
 	// border-radius: 25px 25px 0 0;
 	display: flex;
 	flex-flow: column;
-	transform: scaleX(1);
+	transform: translateX(0);
 	overflow: hidden;
 	opacity: 1;
 	

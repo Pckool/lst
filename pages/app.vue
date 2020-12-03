@@ -34,8 +34,8 @@ export default defineComponent({
     transition: all 0.4s var(--ease);
 }
 .page-enter, .page-leave-to{
-    // opacity: 0;
-    // transform: translateY(30%);
-    width: 0%;
+    opacity: 0;
+    transform: translateY(30%);
+    // width: 0%;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-	<span class="date-input_cont">
+	<span class="time-input_cont">
 		<span><large-input v-model="hour" name="hour" @mousewheel="scroll"/></span>
 		<span class="sep">:</span>
 		<span><large-input v-model="minute" name="minute" @mousewheel="scroll"/></span>
@@ -174,7 +174,7 @@ export default defineComponent({
 })
 </script>
 <style lang="scss">
-.date-input_cont{
+.time-input_cont{
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -188,7 +188,19 @@ export default defineComponent({
 
 	.sep{
 		padding: 0 0.4em;
-		font-size: 95px;
+		@media screen and (max-width: 3830px){
+			font-size: 95px;
+		}
+		@media screen and (max-width: 1830px){
+			font-size: 61px;
+		}
+		@media screen and (max-width: 1280px){
+			font-size: 47px;
+		}
+		@media screen and (max-width: 1080px){
+			font-size: 34px;
+			padding: 0 0.2em;
+		}
 	}
 }
 </style>

@@ -110,36 +110,39 @@ export default defineComponent({
 	}
 	.tasks_cont{
 		flex-grow: 1;
-		padding: 6em 6em 3em 6em;
+		padding: 3em 6em 3em 6em;
 		display: flex;
 		flex-flow: row wrap;
 		justify-content: space-around;
+		
+		overflow: auto;
 		@media screen and (max-width: 711px) {
 			padding: 6em 3em 3em 3em;
 		}
 		
-		.task-list{
-			flex-flow: column nowrap;
-			display: flex;
-			max-height: 53%;
-    		overflow: auto;
-			padding: 0.5em;
-			min-width: 400px;
-			@media screen and (max-width: 711px) {
-				min-width: unset;
-			}
-			@media screen and (max-height: 1000px) {
-				max-height: 90%;
-			}
-		}
+		
 		.tasks-inner{
 			margin: 0 1em;
-			
+			// max-height: 53%;
+			overflow-y: auto;
 			.small-header{
 				margin-top: 0.6em;
 				margin-bottom: 0.9em;
 				color: var(--darkGrey);
 				user-select: none;
+				text-transform: capitalize;
+			}
+			.task-list{
+				flex-flow: column nowrap;
+				display: flex;
+				
+				
+				padding: 0.5em;
+				min-width: 400px;
+				@media screen and (max-width: 711px) {
+					min-width: unset;
+				}
+				
 			}
 			
 		}

@@ -13,7 +13,7 @@
 				
 				<div class="right_cont">
 					<div class="links">
-							<nice-link :text="link.text"  v-for="link in links" :key="link.id" :to="link.route"/>
+						<nice-link :text="link.text"  v-for="link in links" :key="link.id" :to="link.route"/>
 					</div>	
 					<profile-img/>
 				</div>
@@ -30,7 +30,9 @@
 			
 			<nuxt/>
 			<add-task-btn-mobile/>
+			
 		</div>
+		<new-task-mobile v-if="openNewTask && mobile" @close="openNewTask=false" class=""/>
 		<alert/>
 		
 	</div>
@@ -38,7 +40,7 @@
 
 <script lang="ts">
 
-import {defineComponent, getCurrentInstance, onBeforeMount, onMounted, reactive, ref} from '@vue/composition-api'
+import {defineComponent, getCurrentInstance, onBeforeMount, onBeforeUnmount, onMounted, reactive, ref} from '@vue/composition-api'
 import Alert from '~/components/general/Alert.vue'
 import NiceLink from '~/components/general/niceLink.vue'
 import Navigation from '~/components/app/navigation.vue'
@@ -47,6 +49,7 @@ import AddTaskBtn from '~/components/app/addTaskBtn.vue'
 import AddTaskBtnMobile from '~/components/app/addTaskBtnMobile.vue'
 import ProfileImg from '~/components/app/profileImg.vue'
 import newTask from '~/components/app/newTask.vue'
+import newTaskMobile from '~/components/app/newTaskMobile.vue'
 import { tasks, user, emitters } from '~/core'
 import anime from 'animejs' 
 const linkArr = [
@@ -55,7 +58,7 @@ const linkArr = [
 ]
 export default defineComponent({
 	components: {Alert, Navigation, NiceLink, Search,
-	ProfileImg, newTask, AddTaskBtnMobile},
+	ProfileImg, newTask, AddTaskBtnMobile, newTaskMobile},
 	setup(props, ctx){
 		const verified = ref<boolean>(false)
 		const links = reactive(linkArr)
@@ -63,6 +66,7 @@ export default defineComponent({
 		const loading = ref<boolean>(true)
 		const vue = getCurrentInstance();
 		const blur = ref<boolean>(false)
+		const mobile = ref<boolean>(false)
 
 		onBeforeMount(() => {
 			verified.value = user.state.verified.value;
@@ -73,6 +77,16 @@ export default defineComponent({
 			}
 		})
 
+		const findIsMobile = () => {
+			if(document.body.offsetWidth < 816) {
+				mobile.value = true
+			}
+			else{
+				mobile.value = false
+			}
+		}
+
+		// task stuff
 		const openNewTask = ref<boolean>(false)
         onMounted(() => {
             emitters.tasks.NEW.on(payload => {
@@ -88,8 +102,11 @@ export default defineComponent({
 			})
         })
 
+		// task number stuff
 		const taskNumber = ref<number>();
 		const getTasksAmo = () =>  tasks.collection.getGroup('default').value.length;
+
+		// general "onMounted" 
 		onMounted(async () => {
 			vue.$nextTick(async () => {
 				vue.$nuxt.$loading.start()
@@ -97,6 +114,9 @@ export default defineComponent({
 				loading.value = false;
 				vue.$nuxt.$loading.finish()
 				taskNumber.value = getTasksAmo();
+				findIsMobile()
+
+				window.addEventListener('resize', findIsMobile)
 				anime({
 					targets: vue.$el.querySelectorAll('.link'),
 					translateX: ['50%', '0%'],
@@ -110,6 +130,9 @@ export default defineComponent({
 			emitters.general.BLUR.on(val => {
 				blur.value = val;
 			})
+		})
+		onBeforeUnmount(() => {
+			window.removeEventListener('resize', findIsMobile)
 		})
 
 		const logout = async () => {
@@ -132,12 +155,19 @@ export default defineComponent({
 			loading,
 			openNewTask,
 			logout,
-			blur
+			blur,
+			mobile
 		}
 	}
 })
 </script>
 <style lang="scss" scoped>
+$bp1: 1800px;
+$bp2: 1400px;
+$bp3: 1200px;
+$bp4: 816px;
+$bp5: 711px;
+$bp6: 520px;
 #app{
 	height: 100%;
 	min-height: 100vh;
@@ -158,7 +188,7 @@ export default defineComponent({
 		.logout-btn{
 			cursor: pointer;
 		}
-		@media screen and (max-width: 816px) {
+		@media screen and (max-width: $bp4) {
 			display: none;
 		}
 	}
@@ -220,7 +250,7 @@ export default defineComponent({
 			justify-content: flex-start;
 			flex-grow: 1;
 
-			@media screen and (max-width: 1200px) {
+			@media screen and (max-width: $bp3) {
 				display: none;
 			}
 		}
@@ -234,15 +264,20 @@ export default defineComponent({
 				}
 			}
 		}
-		@media screen and (max-width: 1200px) {
+		@media screen and (max-width: $bp3) {
 			justify-content: space-between;
 		}
-		@media screen and (max-width: 711px) {
+		@media screen and (max-width: $bp5) {
 			.title_cont{
 				display: none;
 			}
 			.right_cont{
 				padding-left: 1em;
+			}
+		}
+		@media screen and (max-width: $bp6) {
+			.right_cont{
+				padding-right: 1em;
 			}
 		}
 		
@@ -277,6 +312,6 @@ export default defineComponent({
 .new-task-con-enter, .new-task-con-leave-to{
 	// width: 0%;
 	opacity: 0;
-	// transform: scaleX(0);
+	transform: translateX(-30%);
 }
 </style>
