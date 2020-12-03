@@ -5,6 +5,7 @@
 			<svg-icon src="/images/logout.svg" @click="logout" class="logout-btn"/>
 			<transition name="new-task-con" :css="true" mode="out-in">
 				<new-task v-if="openNewTask" @close="openNewTask=false" class=""  key="new-task-panel"/>
+				<edit-task v-else-if="openEditTask" @close="openEditTask=false" class=""  key="edit-task-panel"/>
 			</transition>
 		</div>
 		<div id="app_core" v-if="!loading" :blur="blur">
@@ -30,9 +31,11 @@
 			
 			<nuxt/>
 			<add-task-btn-mobile/>
+			<svg-icon src="/images/logout.svg" @click="logout" class="logout-btn_mobile" v-if="mobile"/>
 			
 		</div>
 		<new-task-mobile v-if="openNewTask && mobile" @close="openNewTask=false" class=""/>
+		<edit-task-mobile v-else-if="openEditTask && mobile" @close="openEditTask=false" class=""/>
 		<alert/>
 		
 	</div>
@@ -50,7 +53,10 @@ import AddTaskBtnMobile from '~/components/app/addTaskBtnMobile.vue'
 import ProfileImg from '~/components/app/profileImg.vue'
 import newTask from '~/components/app/newTask.vue'
 import newTaskMobile from '~/components/app/newTaskMobile.vue'
-import { tasks, user, emitters } from '~/core'
+import editTask from '~/components/app/editTask.vue'
+import editTaskMobile from '~/components/app/editTaskMobile.vue'
+
+import { tasks, user, emitters, alerts } from '~/core'
 import anime from 'animejs' 
 const linkArr = [
 	{id: 0, route: '/app/', text: 'Dashboard'},
@@ -58,7 +64,7 @@ const linkArr = [
 ]
 export default defineComponent({
 	components: {Alert, Navigation, NiceLink, Search,
-	ProfileImg, newTask, AddTaskBtnMobile, newTaskMobile},
+	ProfileImg, newTask, AddTaskBtnMobile, newTaskMobile, editTask, editTaskMobile},
 	setup(props, ctx){
 		const verified = ref<boolean>(false)
 		const links = reactive(linkArr)
@@ -67,6 +73,7 @@ export default defineComponent({
 		const vue = getCurrentInstance();
 		const blur = ref<boolean>(false)
 		const mobile = ref<boolean>(false)
+		const openEditTask = ref<boolean>(false)
 
 		onBeforeMount(() => {
 			verified.value = user.state.verified.value;
@@ -96,15 +103,24 @@ export default defineComponent({
 				openNewTask.value = true;
 			})
 			emitters.tasks.CREATED.on(payload => {
-				
+				alerts.create({message: 'task created!'})
 				openNewTask.value = false;
+				taskNumber.value = getTasksAmo();
+			})
+			emitters.tasks.EDIT.on(payload => {
+				
+				tasks.collection.selectors.selected.select(payload.id);
+				openEditTask.value = true;
+				
+			})
+			emitters.tasks.DELETE.on(() => {
 				taskNumber.value = getTasksAmo();
 			})
         })
 
 		// task number stuff
 		const taskNumber = ref<number>();
-		const getTasksAmo = () =>  tasks.collection.getGroup('default').value.length;
+		const getTasksAmo = () =>  Object.keys(tasks.collection.data).length;
 
 		// general "onMounted" 
 		onMounted(async () => {
@@ -156,7 +172,8 @@ export default defineComponent({
 			openNewTask,
 			logout,
 			blur,
-			mobile
+			mobile,
+			openEditTask
 		}
 	}
 })
@@ -187,6 +204,12 @@ $bp6: 520px;
 		justify-content: space-between;
 		.logout-btn{
 			cursor: pointer;
+			&:hover{
+				path{
+					stroke: var(--red);
+				}
+				
+			}
 		}
 		@media screen and (max-width: $bp4) {
 			display: none;
@@ -234,7 +257,7 @@ $bp6: 520px;
 			justify-content: center;
 			
 			.title{
-
+				word-break: break-all;
 			}
 			.bar{
 				height: 1px;
@@ -271,13 +294,14 @@ $bp6: 520px;
 			.title_cont{
 				display: none;
 			}
+			justify-content: center;
 			.right_cont{
 				padding-left: 1em;
 			}
 		}
 		@media screen and (max-width: $bp6) {
 			.right_cont{
-				padding-right: 1em;
+				padding: 1em 0.3em;
 			}
 		}
 		
@@ -302,7 +326,20 @@ $bp6: 520px;
 		filter: blur(3px);
 		pointer-events: none;
 	}
+	.logout-btn_mobile{
+		margin: 24px;
+		position: absolute;
+		cursor: pointer;
+		bottom: 0;
+		left: 0;
+		&:hover{
+			path{
+				stroke: var(--red);
+			}
+			
+		}
 
+	}
 	
 				
 }

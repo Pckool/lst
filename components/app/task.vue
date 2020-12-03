@@ -1,6 +1,6 @@
 <template>
-	<div :class="'task '+task.tag.color" :id="task.id" :status="task.status" :waiting="waiting"  @mouseleave="openMore=false">
-		<div class="bar">
+	<div :class="'task '+task.tag.color" :id="task.id" :status="task.status" :waiting="waiting" :opened="openMore">
+		<div class="bar" @dblclick="startEdit(task)">
 			<div class="bar_check_text" :blur="openMore">
 				<checkbox v-model="checked"/>
 				<div class="text_cont">
@@ -16,13 +16,18 @@
 			
 			<span class="more" :expand="openMore" :opened="openMore">
 				<svg-icon src="/images/more.svg" @click="openMore=!openMore" class="more-ico"/>
-				<div class="more-drop" ref="moreEl">
-					<small class="more-item" @click="deleteTask(task)"><i class="fas fa-trash fa-sm"></i></small>
-				</div>
+				
 			</span>
 			
 		</div>
-		
+		<div class="more-drop" ref="moreEl" v-if="openMore">
+			<small class="more-item" @click="deleteTask(task)">
+				<i class="fas fa-trash fa-lg"></i>
+			</small>
+			<small class="more-item" @click="startEdit(task)">
+				<i class="fas fa-pen-alt fa-lg"></i>
+			</small>
+		</div>
 		<div class="loading-bar"></div>
 	</div>
 </template>
@@ -43,7 +48,7 @@ export default defineComponent({
 	setup(props, ctx){
 		let timeout = ref();
 		let prevValue = null;
-		const task = ref<Task>(tasks.collection.getValueById(props.taskId))
+		const task = ref<Task>({...tasks.collection.getValueById(props.taskId)})
 		const checked = ref<boolean>(task.value.status === "complete")
 		const waiting = ref<boolean>(false)
 		const openMore = ref<boolean>(false)
@@ -129,6 +134,10 @@ export default defineComponent({
 		}
 
 		const strikethrough = computed(() => task.value.status === 'complete' ? 'extend' : '' )
+
+		const startEdit = (task: Task) => {
+			emitters.tasks.EDIT.emit(task);
+		}
 		return {
 			checked,
 			task,
@@ -137,6 +146,7 @@ export default defineComponent({
 			deleteTask,
 			openMore,
 			moreEl,
+			startEdit,
 		}
 	}
 })
@@ -154,6 +164,7 @@ export default defineComponent({
 	min-height: fit-content;
 	height: max-content;
 	overflow: hidden;
+	transition: all 0.4s var(--ease);
 	.loading-bar{
 		position: absolute;
 		bottom: 0;
@@ -168,11 +179,12 @@ export default defineComponent({
 		flex-wrap: nowrap;
 		justify-content: space-between;
 		.bar_check_text{
+			opacity: 1;
 			display: flex;
 			flex-wrap: nowrap;
 			align-items: flex-start;
 			flex-grow: 1;
-
+			transition: all 0.3s var(--ease);
 		}
 		
 	}
@@ -212,6 +224,7 @@ export default defineComponent({
 		align-items: center;
 		position: relative;
 		height: fit-content;
+		transition: all 0.2s var(--ease);
 		.more-ico{
 			width: 17px;
 			svg{
@@ -223,31 +236,33 @@ export default defineComponent({
 		}
 		
 		
-		.more-drop{
-			transition: all 0.2s var(--ease);
-			position: absolute;
-			top: 100%;
-			left: 50%;
-			transform: translateX(-50%);
-			background: var(--white);
-			
-			display: flex;
-			flex-flow: column nowrap;
-			border-radius: 7px;
-			overflow: hidden;
-			max-height: 0px;
-
-			// display: none;
-		}
-		.more-item{
-			padding: 12px;
-		}
+		
 		&[opened="true"]{
-			.more-drop{
-				max-height: 100px;
-			}
 		}
 	}
+	.more-drop{
+		transition: all 0.4s var(--ease) 0.3s;
+		position: absolute;
+		top: 50%;
+		left: 0;
+		transform: rotateX(-180deg) translateY(50%);
+		
+		display: flex;
+		flex-flow: row nowrap;
+		border-radius: 7px;
+		overflow: hidden;
+		padding: 2em;
+		// display: none;
+	}
+	.more-item{
+		padding: 12px 1em;
+		cursor: pointer;
+		transition: all 0.2s var(--ease);
+		&:hover{
+			color: var(--white)
+		}
+	}
+
 	&[status="complete"]{
 		background: var(--darkGrey) !important;
 		.line{
@@ -263,8 +278,33 @@ export default defineComponent({
 			width: 100%;
 		}
 	}
+	&[opened="true"]{
+		.bar_check_text{
+			// opacity: 0;
+			animation: flip 0.3s var(--ease) 1 forwards;
+			
+		}
+		transform: rotateX(180deg);
+		.more{
+			align-self: flex-end;
+		}
+	}
 	@media screen and (max-width: 711px) {
 		width: auto;
 	}
+
+	@keyframes flip {
+		0%{
+			opacity: 1;
+		}
+		99%{
+			opacity: 0;
+		}
+		100%{
+			opacity: 0;
+			visibility: hidden;
+		}
+	}
+	
 }
 </style>

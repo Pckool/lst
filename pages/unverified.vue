@@ -13,7 +13,7 @@
     </div>
 </template>
 <script lang="ts">
-import {defineComponent, getCurrentInstance, onMounted, ref, watch} from '@vue/composition-api'
+import {defineComponent, getCurrentInstance, onBeforeMount, onMounted, ref, watch} from '@vue/composition-api'
 import dynamicInput from '~/components/general/dynamicInput.vue'
 import { alerts, user } from '~/core'
 
@@ -70,6 +70,14 @@ export default defineComponent({
 
             }
         }
+
+        onBeforeMount(() => {
+			if(user.state.verified.value){
+				console.log('user is verified... redirecting to the app page...')
+				
+				vue.$router.push('/app')
+			}
+		})
         return {
             code,
             submit,

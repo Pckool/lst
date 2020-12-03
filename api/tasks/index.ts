@@ -37,11 +37,11 @@ function tasksInit(app: Express){
 			}
 			Log.info('Task generated...');
 			
-			await TDB.add(task);
+			const newTask = await TDB.add(task);
 
 			Log.info('Task added to DB...');
 
-			res.status(200).json(task);
+			res.status(200).json(newTask||task);
 				
 			Log.info(`Task successfully generated!`);
 			

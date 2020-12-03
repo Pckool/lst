@@ -24,9 +24,9 @@ export default defineComponent({
 		}
 	},
 	setup(props, ctx){
-		const now = new Date(props.value||null)
+		const now = new Date(props.value||Date.now())
 		const month = ref<string>(`${now.getMonth()+1}`.padStart(2, '0'))
-		const date = ref<string>(`${now.getDate()}`.padStart(2, '0'))
+		const date = ref<string>(`${now.getDate()+1}`.padStart(2, '0'))
 		const year = ref<string>(`${now.getFullYear()}`.padStart(4, '0'))
 		const vue = getCurrentInstance();
 		
@@ -46,10 +46,6 @@ export default defineComponent({
 			// TODO: add logic here to check if the date is valid
 			const el = <HTMLElement>e.target;
 			const name = el.getAttribute('name')
-
-			
-			
-
 			if(e.deltaY < 0){
 				// going up
 				let val;
@@ -131,7 +127,7 @@ export default defineComponent({
 			if(month.value.length > 2){
 				newVal = month.value.substring(0, 2);
 			}
-			newVal = newVal.replace(/[A-z]/g, '').padStart(2, '0').trim();
+			newVal = newVal.replace(/[A-z]/g, '').padStart(2, '0').trim(); // removing all alpha characters and normalizing the string
 			let newValNum = Number(newVal);
 			if(!isNaN(newValNum) && newValNum < 1){
 				newVal = `${1}`
@@ -236,7 +232,7 @@ export default defineComponent({
 		}
 		@media screen and (max-width: 1080px){
 			font-size: 34px;
-			padding: 0 0.2em;
+			padding: 0 0.1em;
 		}
 	}
 }

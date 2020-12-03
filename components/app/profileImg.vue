@@ -36,14 +36,14 @@ export default defineComponent({
 			fr.onerror = err => reject(err);
 		})
 		const imgChange = async (e) => {
-			const file = (<HTMLInputElement>e.target).files[0];
+			let file = (<HTMLInputElement>e.target).files[0];
 			if(file){
 				const can: HTMLCanvasElement = document.createElement('canvas')
 				const img: HTMLImageElement = document.createElement('img')
 
-				
+				// image compression to a much lower resolution
 				img.src = await toBase64(file)
-				img.onload = () => {
+				img.onload = async () => {
 					const h = img.height
 					const w = img.width
 					const targetWidth = 245
@@ -53,25 +53,21 @@ export default defineComponent({
 						const ctx = can.getContext("2d")
 						let nH = h;
 						let nW = w;
-						if(w>h){
-							nW = h
-						}
-						else {
-							nH = w
-						}
+						if(w>h) nW = h
+						else nH = w
 						
 						const ratio = targetWidth / img.width
 						ctx.drawImage(img, 0, 0, targetWidth, img.height*ratio);
+						can.height = img.height*ratio
+						can.width = targetWidth
+						const data = can.toDataURL()
+						console.log(data)
+						imgData.value = data;
 					}
-					
-
-					
+					else{
+						imgData.value = img.src;
+					}
 				}
-				
-
-				imgData.value = await toBase64(file);
-				
-
 				waiting.value = true;
 				if(timeout) {
 					clearTimeout(timeout);

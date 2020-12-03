@@ -8,7 +8,7 @@
 	</span>
 </template>
 <script lang="ts">
-import {defineComponent, getCurrentInstance, ref, watch, watchEffect} from '@vue/composition-api'
+import {defineComponent, getCurrentInstance, onMounted, ref, watch, watchEffect} from '@vue/composition-api'
 import largeInput from '~/components/general/largeInput.vue'
 
 export default defineComponent({
@@ -25,13 +25,24 @@ export default defineComponent({
 	},
 	setup(props, ctx){
 		const now = new Date()
-		const hour = ref<string>(`${now.getHours() < 12 ? now.getHours() : now.getHours()-12}`.padStart(2, '0'))
-		const minute = ref<string>(`${now.getMinutes()}`.padStart(2, '0'))
+		try{
+			const [hr, mn] = props.value.split(':').map(str => Number(str.trim()));
+			now.setHours(hr, mn)
+		}
+		catch(err){
+			console.warn(err)
+		}
+		const hour = ref<string>()
+		const minute = ref<string>()
 		const seg = ref<string>(`${now.getHours() < 12 ? 'am': 'pm'}`)
 		const vue = getCurrentInstance();
 		
 
-
+		const populateValues = (d: Date|number|string) => {
+			const date = new Date(d||Date.now())
+			hour.value = `${date.getHours() < 12 ? date.getHours() : date.getHours()-12}`.padStart(2, '0')
+			minute.value = `${date.getMinutes()}`.padStart(2, '0')
+		}
 		const scroll = (e: WheelEvent) => {
 			// TODO: add logic here to check if the date is valid
 			const el = <HTMLElement>e.target;
@@ -91,6 +102,7 @@ export default defineComponent({
 							
 							minute.value = `${--val}`
 						}
+						
 						break;
 					case 'seg':
 						seg.value === 'pm' ? seg.value = `am` : seg.value = `pm`
@@ -105,12 +117,16 @@ export default defineComponent({
 				newVal = hour.value.substring(0, 2);
 			}
 			newVal = newVal.replace(/[A-z]/g, '').padStart(2, '0').trim();
+			// console.log(newVal)
 			let newValNum = Number(newVal);
 			if(!isNaN(newValNum) && newValNum <= 0){
 				newVal = `${1}`
 			}
 			else if(!isNaN(newValNum) && newValNum > 12){
 				newVal = `${12}`
+			}
+			else if(isNaN(newValNum)){
+				console.warn(newVal, newValNum)
 			}
 			hour.value = newVal;
 		})
@@ -127,6 +143,9 @@ export default defineComponent({
 			}
 			else if(!isNaN(newValNum) && newValNum >= 60){
 				newVal = `${59}`
+			}
+			else if(isNaN(newValNum)){
+				console.warn(newVal, newValNum)
 			}
 			minute.value = newVal
 
@@ -164,11 +183,17 @@ export default defineComponent({
 			// TODO: check to seee if the generated date differs from the component values (essentially, check to see if the date is valid)
 			
 		})
+
+		onMounted(() => {
+			// console.log(now);
+			populateValues(now)
+		})
 		return {
 			hour,
 			minute,
 			seg,
-			scroll
+			scroll,
+			now
 		}
 	}
 })

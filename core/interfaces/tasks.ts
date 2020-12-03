@@ -3,13 +3,13 @@ enum TaskStatus {
     'inprogress' = 'inprogress'
 }
 export interface Task {
-    _id?: string;
+    _id: string;
     id: string;
-    ts: number;
-    text: string;
+    ts?: number;
+    text?: string;
     owner: string;
     status: 'complete'|'inprogress';
-    tag: {
+    tag?: {
         title: string; 
         color: string; 
     }

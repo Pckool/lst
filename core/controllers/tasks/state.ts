@@ -13,9 +13,8 @@ export const collection = App.Collection<Task>()(collection => ({
         'inprogress': collection.Group()
     },
     selectors: {
-        
-    },
-    defaultGroup: true,
+        selected: collection.Selector()
+    }
 }));
 
 export const state = {

@@ -16,9 +16,13 @@ class Fauna {
     }
     async add(collectionName:string, data: any) {
         try{
-            let res = await this.client.query(
+            let res: any = await this.client.query(
                 this.q.Create(this.q.Collection(collectionName), {data})
             )
+            if(res.data){
+                return {...res.data, _id: res.ref.id};
+            }
+            
             
         } catch(err){
             throw err;

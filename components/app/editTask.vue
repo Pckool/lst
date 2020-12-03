@@ -1,5 +1,5 @@
 <template>
-	<div id="new-task_cont_mobile">
+	<div id="edit-task_cont">
 		<div class="header">
 			<div class="header-left">
 				<small>new task</small>
@@ -31,7 +31,7 @@
 	</div>
 </template>
 <script lang="ts">
-import {defineComponent, getCurrentInstance, onBeforeUnmount, onMounted, reactive, ref} from '@vue/composition-api'
+import {defineComponent, getCurrentInstance, onBeforeMount, onBeforeUnmount, onMounted, reactive, ref} from '@vue/composition-api'
 import core, { emitters, PendingTask, Task, tasks, user } from '~/core'
 import DynamicInput from '~/components/general/dynamicInput.vue'
 import SvgIcon from '~/components/general/svgIcon.vue'
@@ -44,13 +44,14 @@ import anime from 'animejs'
 export default defineComponent({
 	components: {DynamicInput, SvgIcon, LargeInput, DateInput, TimeInput},
 	setup(props, ctx){
-		const task = ref<PendingTask>({...tasks.state.pending.value})
+		const task = ref<Task>({...tasks.collection.selectors.selected.value})
 		let animation;
 		const text = ref<string>('Pick up dog food')
+		const tag = ref<{title: string, color: string}>(task.value.tag||{title: 'green', color: 'green'})
 		
 		const ts = new Date(task.value.ts||Date.now())
-		const time = ref<string>(`${ts.getHours()}`.padStart(2, '0') + ':' + `${ts.getMinutes()}`.padStart(2, '0'))
-		const date = ref<string>(`${ts.getFullYear()}`+'-'+`${ts.getMonth()+1}`.padStart(2, '0')+'-'+`${ts.getDate()}`.padStart(2, '0'))
+		const time = ref<string>()
+		const date = ref<string>()
 		const genDateTime = (d: Date|number|string) => {
 			const ts = new Date(d)
 			time.value = `${ts.getHours()}`.padStart(2, '0') + ':' + `${ts.getMinutes()}`.padStart(2, '0')
@@ -70,25 +71,27 @@ export default defineComponent({
 			task.value.owner = user.state.id.value
 			task.value.status = 'inprogress'
 			try{
-				const genTask: Task = await tasks.add(task.value)
-				core.emitters.tasks.CREATED.emit(genTask);
+				await tasks.update(task.value)
+				core.emitters.tasks.EDITED.emit(task.value);
 				if(animation) animation.reverse()
 				await animation.finished
 				ctx.emit('close')
 			}
 			catch(err){
 				console.warn(err)
-				ctx.emit('close')
 			}
 				
 			
 		}
+		onBeforeMount(() => {
+			genDateTime(ts); // initialize the values
+		})
 		// for emitter update
 		onMounted(() => {
 			emitters.general.BLUR.emit(true);
 			// used if the user decides to change something about the new task (tag, time, etc) from an outside component
-			emitters.tasks.NEW.on(payload => {
-				console.log(payload)
+			emitters.tasks.PATCH.on(payload => {
+				// console.log(payload)
 				if(payload.ts){
 					genDateTime(payload.ts)
 				}
@@ -109,19 +112,19 @@ export default defineComponent({
 		
 		onMounted(() => {
 			animation = vue.$nextTick(() => {
-				const el: HTMLElement = document.querySelector('#new-task_cont')
+				const el: HTMLElement = document.querySelector('#edit-task_cont')
 				anime.timeline({
 					easing: 'easeInOutQuad',
 				}).add({
-					targets: '#new-task_cont',
-					height: [0, el.offsetHeight],
+					targets: '#edit-task_cont',
+					width: [0, el.offsetWidth],
 					duration: 500,
 				}, '+=100').add({
-					targets: document.querySelectorAll('#new-task_cont .header'),
+					targets: document.querySelectorAll('#edit-task_cont .header'),
 					opacity: [0, 1],
 					duration: 300,
 				}, '-=100').add({
-					targets: document.querySelectorAll('#new-task_cont .in-cont, #new-task_cont button'),
+					targets: document.querySelectorAll('#edit-task_cont .in-cont, #edit-task_cont button'),
 					delay: anime.stagger(300),
 					opacity: [0, 1],
 					duration: 300,
@@ -156,45 +159,27 @@ export default defineComponent({
 })
 </script>
 <style lang="scss">
-#new-task_cont_mobile{
+#edit-task_cont{
 	transition: all 0.2s var(--ease);
-	position: fixed;
+	position: absolute;
 	z-index: 300;
-	bottom: 0;
-	left: 0;
+	top: 0;
+	left: 100%;
 	width: fit-content;
 	height: 100%;
-	width: 100%;
 	background: var(--dark);
 	// border-radius: 25px 25px 0 0;
 	display: flex;
 	flex-flow: column;
-	transform: translateX(0);
+	transform: scaleX(1);
 	overflow: hidden;
 	opacity: 1;
-	@media screen and (max-width: 3830px){
-		
-	}
-	@media screen and (max-width: 1830px){
-		
-	}
-	@media screen and (max-width: 1280px){
-		
-	}
-	@media screen and (max-width: 1080px){
-		
-		padding: 0 0.4em;
-	}
 	
 	.header{
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 3em 6em;
-		@media screen and (max-width: 1080px){
-		
-			padding: 1em 1.5em;
-		}
+		padding: 3em 6em 3em 6em;
 		.header-left{
 			display: flex;
 			align-items: center;
@@ -245,15 +230,12 @@ export default defineComponent({
 		overflow-y: auto;
 		overflow-x: hidden;
 		flex-shrink: 1;
-		padding: 3em 6em;
+		padding: 3em 6em 3em 6em;
 		button{
 
 		}
 		
-		@media screen and (max-width: 1080px){
 		
-			padding: 1em 1.5em;
-		}
 	}
 	.spread{
 		justify-content: space-between;

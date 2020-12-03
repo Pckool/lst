@@ -183,12 +183,14 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-
+$bp1: 1800px;
+$bp2: 1400px;
+$bp3: 1200px;
+$bp4: 816px;
+$bp5: 711px;
+$bp6: 520px;
 .main-cont{
-	.background{
-		background: var(--loxBeige);
-		z-index: 1;
-	}
+
 	display: flex;
 	flex-flow: row wrap;
 	justify-content: space-between;

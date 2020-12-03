@@ -32,7 +32,11 @@ export default defineComponent({
             const tag = el.getAttribute('tag');
             const option = options.find(option => option.tag.color === tag)
             ctx.emit('option', option)
-            core.emitters.tasks.NEW.emit({tag: option.tag})
+            if(tasks.collection.selectors.selected.isSet){
+                core.emitters.tasks.PATCH.emit({tag: option.tag})
+            }else{
+                core.emitters.tasks.NEW.emit({tag: option.tag})
+            }
         }
         
         return {
@@ -47,7 +51,7 @@ export default defineComponent({
     position: fixed;
     right: 0;
     bottom: 0;
-    margin: 14px;
+    margin: 24px;
     width: 34px;
     max-height: 34px;
     height: min-content;

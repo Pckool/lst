@@ -1,7 +1,7 @@
 <template>
 	<div id="task-calendar_cont">
-		<div class="calendar" @mousewheel="scroll">
-			<div class="calendar_center-col">
+		<div class="calendar">
+			<div class="calendar_center-col" @mousewheel="scroll">
 				<div class="labels">
 					<span class="label" v-for="label in labels" :key="label">{{label}}</span>
 				</div>
@@ -26,14 +26,17 @@
 			<div class="calendar_left-col_cont">
 				<div class="calendar_left-col">
 					<div class="left-col_top">
+						<svg-icon src="/images/wedge_left.svg" @click="changeMonth('prev')" class="wedge-arrow"/>
 						<h1 class="month-label">{{monthLabel}}</h1>
+						<svg-icon src="/images/wedge_right.svg" @click="changeMonth('next')" class="wedge-arrow"/>
+
 						<small class="year-label">{{yearLabel}}</small>
 					</div>
 					<div class="left-col_body">
-						<div v-for="task in displayedTasks" :key="'visual_'+task.id" :class="'cal-task '+task.tag.color">
-							<div class="task-text">{{task.text}}</div>
-							<small class="task-time">{{new Date(task.ts).toLocaleTimeString()}}</small>
-						</div>
+						<task v-for="task in displayedTasks" :key="'visual_'+task.id" :taskId="task.id">
+							<!-- <div class="task-text">{{task.text}}</div>
+							<small class="task-time">{{new Date(task.ts).toLocaleTimeString()}}</small> -->
+						</task>
 					</div>
 					
 				</div>
@@ -48,10 +51,13 @@
 import {defineComponent, onMounted, reactive, ref, computed, watch} from '@vue/composition-api'
 import core, { PendingTask, Task, tasks, emitters } from '~/core'
 import CalendarDates from 'calendar-dates'
+import TaskComp from '~/components/app/task.vue' 
 import dayjs from 'dayjs'
 const calDates = new CalendarDates()
 export default defineComponent({
+	components: {Task: TaskComp},
 	setup(props, ctx){
+		
 		const tasksThisMonth = ref<Task[]>()
 		const cal = ref()
 		const month = ref<number>(new Date().getMonth())
@@ -86,27 +92,19 @@ export default defineComponent({
 			tasksThisMonth.value = tasks.findByMonth(new Date())
 		})
 
-		
+		onMounted(() => {
+			emitters.tasks.CREATED.on(() => {
+				creatingNewTask.value = false;
+			})
+			emitters.tasks.CANCEL.on(() => {
+				creatingNewTask.value = false;
+			})
+			emitters.tasks.DELETE.on(() => {
+				tasksThisMonth.value = tasks.findByMonth(new Date(year.value, month.value, 1))
+			})
+		})
 
-		const scroll = (e: WheelEvent) => {
-			if(e.deltaY < 0){
-				// going up
-				if(month.value+1 >11){
-					year.value++;
-					return month.value = 0;
-				}
-				month.value = ++month.value;
-				// month.value = 
-			}
-			else{
-				// going down
-				if(month.value-1 < 0){
-					year.value--;
-					return month.value = 11;
-				}
-				month.value = --month.value;
-			}
-		}
+		
 
 		// new task stuff
 		const creatingNewTask = ref<boolean>(false);
@@ -119,14 +117,7 @@ export default defineComponent({
 			}
 			emitters.tasks.NEW.emit(pending)
 		}
-		onMounted(() => {
-			emitters.tasks.CREATED.on(() => {
-				creatingNewTask.value = false;
-			})
-			emitters.tasks.CANCEL.on(() => {
-				creatingNewTask.value = false;
-			})
-		})
+		
 
 		// reading the tasks for a specific date
 		const getDaysTasks = (iso: string, max?:number) => {
@@ -160,8 +151,36 @@ export default defineComponent({
 		})
 		
 
+		const changeMonth = (to: "next"|"prev") => {
+			if(to === "next"){
+				// going up
+				if(month.value+1 >11){
+					year.value++;
+					return month.value = 0;
+				}
+				month.value = ++month.value;
+			}
+			else{
+				// going down
+				if(month.value-1 < 0){
+					year.value--;
+					return month.value = 11;
+				}
+				month.value = --month.value;
+			}
+		}
 
-		
+		const scroll = (e: WheelEvent) => {
+			if(e.deltaY < 0){
+				// going up
+				changeMonth("next")
+				// month.value = 
+			}
+			else{
+				// going down
+				changeMonth("prev")
+			}
+		}
 		return {
 			month,
 			cal,
@@ -173,7 +192,8 @@ export default defineComponent({
 			newTask,
 			getDaysTasks,
 			populateList,
-			displayedTasks
+			displayedTasks,
+			changeMonth
 		}
 	}
 })
@@ -201,6 +221,10 @@ $bp6: 520px;
 		@media screen and (max-width: $bp3){
 			padding: 2em 0em;
 			width: min-content;
+		}
+		@media screen and (max-width: $bp4){
+			padding: 1em 0em;
+			
 		}
 		@media screen and (max-width: $bp6){
 			align-items: center;
@@ -373,7 +397,6 @@ $bp6: 520px;
 		
 		.calendar_left-col_cont{
 			margin: 0.6em;
-			width: 300px;
 			display: flex;
 			.calendar_left-col{
 				border: 2px solid var(--darkGrey);
@@ -384,11 +407,15 @@ $bp6: 520px;
 
 				.left-col_top{
 					position: relative;
+					display: flex;
+					flex-wrap: nowrap;
+					justify-content: center;
+					align-items: baseline;
 					.month-label{
 						text-align: center;
 						margin: 0;
 						cursor: default;
-						
+						padding-left: 0.2em;
 					}
 					.year-label{
 						position: absolute;
@@ -397,11 +424,28 @@ $bp6: 520px;
 						font-size: xx-small;
 						cursor: default;
 					}
+					.wedge-arrow{
+						cursor: pointer;
+						margin: 0 0.5em;
+						path{
+							transition: all 0.2s var(--ease);
+							
+						}
+						&:hover{
+							path{
+								stroke: var(--red);
+							}
+							
+						}
+					}
 				}
 				.left-col_body{
 					position: relative;
 					padding-top: 50px;
 					overflow-y: auto;
+					.task{
+						width: unset;
+					}
 					.cal-task{
 						border-radius: 25px;
 						color: var(--black);

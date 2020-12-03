@@ -9,6 +9,7 @@ export default {
         try{
             let res = await DB.add('tasks', newTask);
             console.log("Task Generated: %o", res);
+            return res;
         } catch(err){
             throw err;
         }

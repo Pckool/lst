@@ -8,14 +8,14 @@
 				<transition-group name="tasks" class="task-list">
 					<task v-for="taskId in tasks" :key="taskId" :taskId="taskId" @change="changeSections"/>
 				</transition-group>
-				<span class="no-data" v-if="!tasks.length">Add a task by hovering over the plus icon</span>
+				<span class="no-data" v-if="!tasks.length">hover over the plus icon or go to the calendar!</span>
 			</div>
 			<div class="tasks-inner">
 				<small class="small-header">complete</small>
 				<transition-group name="tasks" class="task-list">
 					<task v-for="taskId in completed" :key="taskId" :taskId="taskId" @change="changeSections"/>
 				</transition-group>
-				<span class="no-data" v-if="!completed.length">Complete a task by clicking on the circle on the left side of a task</span>
+				<span class="no-data" v-if="!completed.length">click the circle on the left side of a task!</span>
 			</div>
 			
 		</div>
@@ -25,7 +25,7 @@
 </template>
 <script lang="ts">
 import {defineComponent, getCurrentInstance, onBeforeMount, onMounted, onUpdated, reactive, ref} from '@vue/composition-api'
-import core, { PendingTask, Task, tasks } from '~/core'
+import core, { emitters, PendingTask, Task, tasks } from '~/core'
 
 import TaskComp from '~/components/app/task.vue'
 import svgIcon from '~/components/general/svgIcon.vue'
@@ -64,6 +64,9 @@ export default defineComponent({
 			core.emitters.tasks.CREATED.on(payload => {
 				populateGrid()
 			})
+			emitters.tasks.DELETE.on(() => {
+				populateGrid()
+			})
 		})
 
 		const changeSections = (payload) => {
@@ -99,6 +102,12 @@ export default defineComponent({
 })
 </script>
 <style lang="scss">
+$bp1: 1800px;
+$bp2: 1400px;
+$bp3: 1200px;
+$bp4: 816px;
+$bp5: 711px;
+$bp6: 520px;
 #inner-tasks{
 	position: relative;
 	flex-grow: 1;
@@ -116,8 +125,11 @@ export default defineComponent({
 		justify-content: space-around;
 		
 		overflow: auto;
-		@media screen and (max-width: 711px) {
-			padding: 6em 3em 3em 3em;
+		@media screen and (max-width: $bp5) {
+			padding: 1em 3em 3em 3em;
+		}
+		@media screen and (max-width: $bp6) {
+			padding: 1em 0.5em 3em 0.5em;
 		}
 		
 		
@@ -127,10 +139,11 @@ export default defineComponent({
 			overflow-y: auto;
 			.small-header{
 				margin-top: 0.6em;
-				margin-bottom: 0.9em;
+				margin-bottom: 1.1em;
 				color: var(--darkGrey);
 				user-select: none;
 				text-transform: capitalize;
+				display: block;
 			}
 			.task-list{
 				flex-flow: column nowrap;

@@ -5,5 +5,12 @@ export const emitter = App.EventGroup(Event => ({
     UPDATED: Event<Task>(),
     CREATED: Event<Task>(),
     CANCEL: Event<Task>(),
+    DELETE: Event<Task>(),
+    EDIT: Event<Task>(),
+    EDITED: Event<Task>(),
+    /**
+     * patch existing Tasks with pending ones
+     */
+    PATCH: Event<PendingTask>(),
 }))
 export default emitter;

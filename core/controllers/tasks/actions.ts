@@ -1,5 +1,6 @@
 import {collection, state} from './state';
 import user from './../user';
+import {emitters} from './../../emitters'
 import routes from '../../api/api.tasks';
 import {PendingTask, Task} from '../../interfaces';
 import dayjs from 'dayjs'
@@ -13,7 +14,7 @@ export const actions = {
 			}
 			routes.add(task).then((res:any) => {
 				// collect the new coupon
-				collection.collect(res.data, ['default', res.data.status]);
+				collection.collect(res.data, [res.data.status]);
 				resolve(res.data);
 			}).catch(err => {
 				reject(err)
@@ -24,10 +25,8 @@ export const actions = {
 		return new Promise((resolve, reject) => {
 			// send the new coupon to the database
 			routes.remove(task).then(res => {
-
-				// console.log('Deleting' + task.id);
-				collection.remove(task.id).everywhere
-				resolve(res);
+				collection.remove(task.id).fromGroups(task.status)
+				emitters.tasks.DELETE.emit()
 			}).catch(err => {
 				reject(err)
 			});
@@ -37,10 +36,9 @@ export const actions = {
 		try{
 			await routes.change(task)
 			// collection.remove(task.id).everywhere
-			// collection.collect(task, ['default', task.status]);
+			// collection.collect(task, [task.status]);
 			collection.update(task.id, task)
 			collection.put(task.id, task.status)
-			console.log(collection, task)
 
 			// return res;
 		} catch(err) {
@@ -106,7 +104,7 @@ export const actions = {
 				console.log('got all tasks.');
 				
 				res.data.forEach((task: Task) => {
-					collection.collect(task, ['default', task.status]);
+					collection.collect(task, [task.status]);
 				})
 				
 				resolve(undefined);
@@ -115,7 +113,7 @@ export const actions = {
 			});
 		});
 	},
-	length: () => collection.getGroup('default').value.length,
+	length: () => collection.data.length,
 	addData(data: any) {
 		
 		state.pending.set({
