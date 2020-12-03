@@ -3,7 +3,7 @@
         <small class="dyn-input_placeholder">{{placeholder}}</small>
         <input v-if="type === 'number'" ref="input" :type="type" :value="value" @input="updateInput" @focus="focus" @blur="blur" :max="max" :min="min"/>
 
-        <input v-else ref="input" :type="type" :value="value" @input="updateInput" @focus="focus" @blur="blur"/>
+        <input v-else ref="input" :type="type" :value="value" @focus="focus" @blur="blur"/>
         <div class="dyn-input_extra">
             <slot></slot>
         </div>
@@ -57,6 +57,7 @@ export default Vue.extend({
         blur(event) {
             if (this.value === '' || this.value === null) (<HTMLElement>this.$el.querySelector('.dyn-input_placeholder')).classList.remove('focused');
             this.$emit('blur', event)
+            this.updateInput(event)
         },
         updateInput(event: Event){
             const target = <HTMLInputElement>event.target;
