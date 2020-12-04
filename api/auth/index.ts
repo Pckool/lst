@@ -4,6 +4,7 @@ require('dotenv').config();
 import {Router, Express} from 'express';
 const router = Router();
 const Nonce = require('nonce-fast');
+const util = require('util');
 // import { SessionStorage} from './userManagement';
 
 
@@ -96,8 +97,8 @@ function authInit(app: Express){
 		let user = await UDB.findUser(req.body.username.toLowerCase())
 		if (user) {
 			try{
-				// let login = util.promisify(req.login)
-				// await login(user);
+				let login = util.promisify(req.login)
+				await login(user);
 				req.login(user, err => {
 					if(err) return res.sendStatus(400);
 					if(!user) return res.sendStatus(400);
